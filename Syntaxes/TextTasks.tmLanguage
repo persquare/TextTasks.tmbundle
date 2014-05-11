@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>todo</string>
+		<string>tasks</string>
+		<string>taskpaper</string>
+	</array>
+	<key>name</key>
+	<string>TextTasks</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>include</key>
+			<string>#line</string>
+		</dict>
+	</array>
+	<key>repository</key>
+	<dict>
+		<key>cancelled</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>comment</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>comment</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Cancelled task</string>
+			<key>match</key>
+			<string>(x )(.+)</string>
+			<key>name</key>
+			<string></string>
+		</dict>
+		<key>comment</key>
+		<dict>
+			<key>comment</key>
+			<string>Anything not a task or header (can have tags)</string>
+			<key>match</key>
+			<string>.+</string>
+			<key>name</key>
+			<string>comment</string>
+		</dict>
+		<key>completed</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>meta.separator.markdown</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>meta.separator.markdown</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Completed task</string>
+			<key>match</key>
+			<string>(\+ )(.+)</string>
+			<key>name</key>
+			<string></string>
+		</dict>
+		<key>header</key>
+		<dict>
+			<key>comment</key>
+			<string>Header (project) format: &lt;heading&gt;:</string>
+			<key>match</key>
+			<string>.+:\s*$</string>
+			<key>name</key>
+			<string>meta.header.tasks</string>
+		</dict>
+		<key>indent</key>
+		<dict>
+			<key>comment</key>
+			<string>Not used. Idea was to indicate bad indents</string>
+			<key>match</key>
+			<string>^\s+</string>
+			<key>name</key>
+			<string></string>
+		</dict>
+		<key>line</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>comment</key>
+					<string>indent is not used</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>comment</key>
+							<string>Must go first</string>
+							<key>include</key>
+							<string>#task</string>
+						</dict>
+						<dict>
+							<key>comment</key>
+							<string>Must come after #task</string>
+							<key>include</key>
+							<string>#header</string>
+						</dict>
+						<dict>
+							<key>comment</key>
+							<string>Must come after #header</string>
+							<key>include</key>
+							<string>#comment</string>
+						</dict>
+					</array>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#tag</string>
+						</dict>
+					</array>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Split line into [&lt;indent&gt;]&lt;statement&gt;[&lt;tags&gt;]</string>
+			<key>match</key>
+			<string>^(\s*)(.+?)((?:\s@\w+(?:\(.*?\))?)*)\s*$</string>
+		</dict>
+		<key>pending</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string></string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string></string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Pending task</string>
+			<key>match</key>
+			<string>(- )(.+)</string>
+			<key>name</key>
+			<string>text.task.pending.texttasks</string>
+		</dict>
+		<key>tag</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>comment</key>
+					<string>Whole tag</string>
+					<key>name</key>
+					<string>comment</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>comment</key>
+					<string>Tag name</string>
+					<key>name</key>
+					<string>entity.name.tag</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>comment</key>
+					<string>Tag value</string>
+					<key>name</key>
+					<string></string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Tag format: @&lt;tag name&gt;[(&lt;tag value)]</string>
+			<key>match</key>
+			<string>\s(@(\w+)(?:\((.*?)\))?)</string>
+		</dict>
+		<key>task</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#pending</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#completed</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#cancelled</string>
+						</dict>
+					</array>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Capture tasks (pending, completed, cancelled)</string>
+			<key>match</key>
+			<string>[\-\+x]\s.+</string>
+			<key>name</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>scopeName</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>1871FB0D-5A0C-4796-9238-53C50BBC9870</string>
+</dict>
+</plist>

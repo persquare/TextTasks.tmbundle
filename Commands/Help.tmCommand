@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+# encoding: utf-8
+
+import os
+import sys
+try:
+    import biplist as plistlib
+except:
+    import plistlib
+
+tm_support_path = os.environ['TM_SUPPORT_PATH']+'/lib'
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import webpreview as wp
+
+CMDDIR = os.environ['TM_BUNDLE_SUPPORT']+ '/../Commands'
+
+def parse_keycode(keycode):
+    # a =&gt; A
+    # A =&gt; ⇧A
+    # ~ =&gt; ⌥
+    # ^ =&gt; ⌃
+    # @ =&gt; ⌘
+    # $
+    # *
+    mappings = {
+        u'~':u'⌥',
+        u'^':u'⌃',
+        u'@':u'⌘'
+    }
+    printable = []
+    shifted = False
+    keycode = list(keycode)
+    key = keycode.pop().decode('utf-8')
+    printable.append(key.upper())
+    if key &gt;= 'A' and key &lt;= 'Z':
+        shifted = True
+        
+    while keycode:        
+        key = keycode.pop().decode('utf-8')
+        printable.append(mappings.get(key, u'?'))
+
+    if shifted:
+        printable.append(u'⇧')
+                
+    printable.reverse()
+    
+    return printable
+
+def list_commands(cmd_dir):
+    commands = [];
+    errors = []
+    for file in os.listdir(cmd_dir):
+        path = cmd_dir + '/' +file
+        pl = plistlib.readPlist(path)
+        try:
+            commands.append((pl.get(u'keyEquivalent', u'--').decode('utf-8'), pl.get(u'name', u'..').decode('utf-8')))
+        except:
+            errors.append(path)
+    return commands, errors
+    
+print wp.html_header("TextTasks Bundle Help", "TextTasks")
+
+# Auto-generate keyboard shortcut list
+
+print u'&lt;h2&gt;TextTasks&lt;/h2&gt;'
+
+print """
+Using taskpaper(ish) syntax ...
+Overriding behaviour of return key
+"""
+
+print u'&lt;h2&gt;Keyboard shortcuts&lt;/h2&gt;'
+
+cmds, errors = list_commands(CMDDIR)
+for (key, cmd)  in cmds:
+    combo = parse_keycode(key)
+    help = u''.join(combo)
+    if not help.strip():
+        continue
+    line = u'&lt;p&gt;%s : %s&lt;/p&gt;' % (help, cmd)
+    
+    ## NOTE!
+    ## THIS is where we need to ENCODE (= turn a unicode string into bytes)
+    ## AND specify the format to use (UTF-8) in the encoding process,
+    ## the default encoding is ASCII which is SOO WRONG for unicode strings.
+    print line.encode('utf-8')
+    
+
+print wp.html_footer()
+
+
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@h</string>
+	<key>name</key>
+	<string>Help</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>html</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
+	<key>uuid</key>
+	<string>D80ED423-DBCA-4573-9E00-7D7CDD37262F</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

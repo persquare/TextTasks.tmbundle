@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+#encoding: utf-8
+
+# For TM2:TextTasks
+# Settings:
+#  Input::Line::Text
+#  output::Replace Selection::Snippet
+
+import os
+import sys
+import re
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import exit_codes as exit
+
+if os.environ.get('TM_SELECTED_TEXT', None):
+    # If there is a selection I can't get access to the line?! Bail.
+    exit.discard()
+
+line = os.environ.get('TM_CURRENT_LINE')
+line = line.rstrip('\r\n ')
+col = int(os.environ.get('TM_LINE_INDEX'))
+
+# The zero-or-one match '- ?' in the regex below 
+# is needed since ' ' are stripped off from the end of line above, 
+# if there was no task, the ' ' after '-' is also removed.
+match = re.match(r'^(\s*)- ?(.*)$', line)
+
+if not match:
+    # Not a task =&gt; just insert newline
+    sys.stdout.write('\n')
+else:    
+    # exit.show_tool_tip('&lt;%s&gt;\n&lt;%s&gt;\n&lt;%s&gt;' % (match.group(0), match.group(1), match.group(2)))    
+    # Four cases:
+    # 1) in leading whitespace =&gt; insert new task before
+    # 2) at end =&gt; insert new task after
+    # 3) inside task =&gt; split at cursor with new task after
+    # 4) at end after empty task =&gt; clear empty task and align with leading space
+    
+    indent = match.group(1)
+    task = match.group(2)
+    indent_level = len(indent)
+    
+    # Case (4)
+    if not task and col &gt;= indent_level:
+        exit.replace_text(indent)
+    # Case (1)
+    if col &lt;= indent_level:
+        sys.stdout.write('%s- ${0}\n' % indent[col:])    
+    # Case (2) &amp; (3)
+    if col &gt; indent_level:
+        sys.stdout.write('\n- ${0}')
+</string>
+	<key>input</key>
+	<string>line</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string></string>
+	<key>name</key>
+	<string>New line</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>snippet</string>
+	<key>outputLocation</key>
+	<string>replaceSelection</string>
+	<key>scope</key>
+	<string>text.texttasks
+
+text.task.pending.texttasks
+
+attr.os-version.10.9.2
+attr.rev-path.todo.TextTasks.Lists.Dropbox.per.Users
+</string>
+	<key>uuid</key>
+	<string>F645D08C-3F92-4EC7-985B-450EE111FFD0</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+#encoding: utf-8
+
+# For TM2:TextTasks
+# Settings:
+#  Input::Line::Text
+#  output::Insert after input::Snippet
+
+import os
+import sys
+import re
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import exit_codes as exit
+
+if os.environ.get('TM_SELECTED_TEXT', None):
+    # If there is a selection I can't get access to the line?! Bail.
+    exit.discard()
+
+line = os.environ.get('TM_CURRENT_LINE')
+line = line.rstrip('\r\n ')
+col = int(os.environ.get('TM_LINE_INDEX'))
+
+match = re.match(r'^(\s*).*$', line)
+
+# FIXME: Simply sys.stdout.write('\n- ${0}') always?
+if not match:
+    # Not a task =&gt; just insert newline
+    sys.stdout.write('\n- ${0}')
+else:
+    indent = match.group(1)
+    sys.stdout.write('%s\n- ${0}' % indent)
+      </string>
+	<key>input</key>
+	<string>line</string>
+	<key>keyEquivalent</key>
+	<string>~</string>
+	<key>name</key>
+	<string>New item on next line</string>
+	<key>outputFormat</key>
+	<string>snippet</string>
+	<key>outputLocation</key>
+	<string>afterInput</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>B0D19F35-8F1A-4552-AF25-5D4A2A9C1575</string>
+</dict>
+</plist>

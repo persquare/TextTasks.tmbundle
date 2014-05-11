@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+
+import os
+import sys
+import re
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import exit_codes as exit
+
+
+selection = os.environ.get('TM_SELECTED_TEXT', None)
+line = os.environ.get('TM_CURRENT_LINE', None)
+
+if selection:
+    # If there is a selection I can't get access to the line?! Bail.
+    exit.show_tool_tip('Selection blocks command.')
+
+line = line.rstrip('\r\n')
+m = re.match(r'^(\s*?)(-|\+)( .*)$', line)
+if not m:
+    # Not a task =&gt; leave line as-is
+    exit.discard()
+    
+indent = m.group(1)
+task = m.group(3)
+if m.group(2) == '-':
+    marker = '+'
+else:
+    marker = '-'
+
+sys.stdout.write('%s%s%s' % (indent, marker, task))
+</string>
+	<key>input</key>
+	<string>line</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@d</string>
+	<key>name</key>
+	<string>Toggle Done</string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>1F2821CF-15BA-48F4-A50B-F361114D8CD9</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

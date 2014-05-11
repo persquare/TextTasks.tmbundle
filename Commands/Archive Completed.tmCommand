@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+# encoding: utf-8
+
+import os
+import sys
+import re
+
+# Python print vs sys.stdout.write():
+# http://stackoverflow.com/q/3263672
+
+# Regexes
+COMPLETE = re.compile(r"^(\s*)(\+ .*)$")
+COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
+COMMENT = None
+
+completed = []
+
+with sys.stdin as f:
+    for line in f:
+        line = line.rstrip().decode('utf-8')
+        if COMMENT:
+            # Match comment of completed task?
+            match = re.match(COMMENT, line)
+            if match:
+                completed.append(match.group(1))
+                continue
+                
+        COMMENT = None
+        # Match completed task?
+        match = re.match(COMPLETE, line)
+        if match:
+            # Drop the indent when archiving
+            completed.append(match.group(2))
+            indent = match.group(1)
+            COMMENT = re.compile(COMMENT_TEMPLATE % indent)
+            continue
+    
+        # Line is not completed nor comment of completed =&gt;
+        # write it back (sans trailing whitespace)
+        sys.stdout.write(line.encode('utf-8'))
+        sys.stdout.write(u'\n')
+        
+for line in completed:
+    sys.stdout.write(line.encode('utf-8'))
+    sys.stdout.write(u'\n')
+    </string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@A</string>
+	<key>name</key>
+	<string>Archive Completed</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceDocument</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>247510C1-7660-4C19-951D-25EAFEE820C4</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
