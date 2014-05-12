@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+# encoding: utf-8
+
+
+import os
+import sys
+import re
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import exit_codes as exit
+
+# &lt;line&gt;[:&lt;col&gt;][-&lt;line&gt;[:&lt;col&gt;]
+selection = os.environ['TM_SELECTION']
+
+range = (int(selection.split('-')[0].split(':',1)[0])-1,
+                int(selection.split('-')[-1].split(':',1)[0])-1)
+
+
+
+
+exit.show_tool_tip('%s - %s' % range)
+    
+    </string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^@p</string>
+	<key>name</key>
+	<string>New Project with Selection</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>D72274DB-9225-4D4B-A489-0C00F2D37FFA</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
