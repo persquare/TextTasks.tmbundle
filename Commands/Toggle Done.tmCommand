@@ -20,23 +20,30 @@ import exit_codes as exit
 
 selection = os.environ.get('TM_SELECTED_TEXT', None)
 line = os.environ.get('TM_CURRENT_LINE', None)
+line = line.rstrip('\r\n ')
 
 if selection:
     # If there is a selection I can't get access to the line?! Bail.
     exit.show_tool_tip('Selection blocks command.')
 
-line = line.rstrip('\r\n')
-m = re.match(r'^(\s*?)(-|\+)( .*)$', line)
+# Should not match heading
+if line.endswith(':'):
+    exit.discard()
+    
+# m = re.match(r'^(\s*)(- |\+ |x )?(.*)$', line)
+m = re.match(r'^(\s*)((?:[-\+x] )?)(.*)$', line)
 if not m:
     # Not a task =&gt; leave line as-is
-    exit.discard()
+    exit.show_tool_tip('Not a match: &lt;%s&gt;' % line)
     
 indent = m.group(1)
 task = m.group(3)
-if m.group(2) == '-':
-    marker = '+'
-else:
-    marker = '-'
+marker = m.group(2).rstrip()
+
+# Four cases for marker: '-', '+', 'x', ''
+# Cycle though them:   -&gt; '-' -&gt; '+' -&gt; 'x' -&gt; '' -&gt;
+cycle = {'-':'+ ', '+':'x ', 'x':'', '':'- '}
+marker = cycle[marker]
 
 sys.stdout.write('%s%s%s' % (indent, marker, task))
 </string>
@@ -47,7 +54,7 @@ sys.stdout.write('%s%s%s' % (indent, marker, task))
 	<key>keyEquivalent</key>
 	<string>@d</string>
 	<key>name</key>
-	<string>Toggle Done</string>
+	<string>Toggle Status</string>
 	<key>outputCaret</key>
 	<string>heuristic</string>
 	<key>outputFormat</key>
