@@ -16,7 +16,7 @@ import re
 # http://stackoverflow.com/q/3263672
 
 # Regexes
-COMPLETE = re.compile(r"^(\s*)(\+ .*)$")
+COMPLETE = re.compile(r"^(\s*)([x\+] .*)$")
 COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
 COMMENT = None
 
@@ -60,7 +60,7 @@ for line in completed:
 	<key>name</key>
 	<string>Archive Completed</string>
 	<key>outputCaret</key>
-	<string>afterOutput</string>
+	<string>interpolateByChar</string>
 	<key>outputFormat</key>
 	<string>text</string>
 	<key>outputLocation</key>
