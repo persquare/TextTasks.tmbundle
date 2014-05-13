@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+# encoding: utf-8
+
+import sys
+import os
+
+line = sys.stdin.readline().rstrip('\r\n ')
+if line.endswith(':'):
+    exit.discard()
+    
+parameter = os.environ.get('TM_SELECTED_TEXT', '')    
+tag = u' @${1|mit,next,bigrock,due|}(${2:%s})${0}' % parameter.decode('utf-8')
+
+sys.stdout.write(line + tag.encode('utf-8'))</string>
+	<key>input</key>
+	<string>line</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@t</string>
+	<key>name</key>
+	<string>Insert tag </string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>snippet</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>E85289ED-5C35-433E-A50C-9B73915E8662</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

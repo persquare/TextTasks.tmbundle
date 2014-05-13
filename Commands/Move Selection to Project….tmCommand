@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveModifiedFiles</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+# encoding: utf-8
+
+import os
+import sys
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+# Don't forget the extra '/lib' part.
+tm_support_path = os.environ['TM_SUPPORT_PATH']+'/lib'
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import tt_helpers as tth
+import exit_codes as exit
+import dialog  
+
+# Get selection
+lines = []
+with sys.stdin as f:
+    for line in f:
+        lines.append(line.decode('utf-8').rstrip())
+
+# Get destination from user
+projs = tth.list_projects()
+proj = dialog.menu(projs)
+if not proj:
+    exit.discard()
+
+# Write the tasks to destination
+if not tth.add_tasks_to_project(lines, proj):
+    exit.discard()
+
+# Clear selection
+exit.replace_text()
+
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>~@p</string>
+	<key>name</key>
+	<string>Move Selection to Project…</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>30552804-B1EA-4F85-BEB5-2EBEADD2943E</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

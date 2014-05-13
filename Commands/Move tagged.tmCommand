@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+# encoding: utf-8
+
+import os
+import sys
+import re
+
+tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+# Don't forget the extra '/lib' part.
+tm_support_path = os.environ['TM_SUPPORT_PATH']+'/lib'
+if tm_support_path not in sys.path:
+     sys.path.insert(0, tm_support_path)
+
+import tt_helpers as tth
+import exit_codes as exit
+import dialog  
+
+PROJECT_TAG = r' @project\((.+?)\)'
+
+# Get dict of projects with unified keys
+projects = {p.lower():p for p in tth.list_projects()}
+
+# FIXME: Also move subtasks
+# FIXME: What to do with comments?
+
+with sys.stdin as f:
+    for line in f:
+
+        match = re.search(PROJECT_TAG, line)
+        if not match:
+            sys.stdout.write(line)
+            continue
+
+        proj = projects.get(match.group(1).lower(), None)
+        if not proj:
+            sys.stdout.write(line)
+            continue
+    
+        # strip tag from task
+        task = re.sub(PROJECT_TAG, u'', line.rstrip('\r\n')).lstrip()
+        if not tth.add_tasks_to_project([task], proj):
+            sys.stdout.write(line)
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>~@t</string>
+	<key>name</key>
+	<string>Move tagged</string>
+	<key>outputCaret</key>
+	<string>heuristic</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>09048BE0-54D2-40F7-992C-F16CACA5D097</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
