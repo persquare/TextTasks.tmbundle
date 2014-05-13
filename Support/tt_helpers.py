@@ -38,23 +38,21 @@ def file_for_project(proj):
             return os.path.join(options.PROJPATH, file)
     return None
     
-def add_lines_to_project(lines, proj):
-    
+def add_tasks_to_project(tasks, proj):  
     filename = file_for_project(proj)
     if not filename:
         return False
-        
-    f = open(filename,'r')
-    temp = f.read()
-    f.close()
-
-    f = open(filename, 'w')
-    f.write(lines)
-    f.write('\n')
-    f.write(temp)
-    f.close()
-    
+    prepend_lines_to_file(tasks, filename)
     return True
+    
+def prepend_lines_to_file(lines, filename):
+    with open(filename,'r') as original: 
+        data = original.read()
+    with open(filename, 'w') as modified:
+        for line in lines:
+            modified.write(line + '\n')
+        modified.write(data)
+        modified.flush()
     
 
 ## 
