@@ -15,9 +15,8 @@ try:
 except:
     import plistlib
 
-tm_support_path = os.environ['TM_SUPPORT_PATH']+'/lib'
-if tm_support_path not in sys.path:
-     sys.path.insert(0, tm_support_path)
+envvars = ['TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
 import webpreview as wp
 

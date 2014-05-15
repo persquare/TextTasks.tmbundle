@@ -10,14 +10,8 @@
 import os
 import sys
 
-tm_support_path = os.environ['TM_BUNDLE_SUPPORT']
-if tm_support_path not in sys.path:
-     sys.path.insert(0, tm_support_path)
-
-# Don't forget the extra '/lib' part.
-tm_support_path = os.environ['TM_SUPPORT_PATH']+'/lib'
-if tm_support_path not in sys.path:
-     sys.path.insert(0, tm_support_path)
+envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
 import tt_helpers as tth
 import exit_codes as exit
