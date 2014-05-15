@@ -8,94 +8,48 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
+"""
+Show help for the TextTasks bundle
+"""
+
 import os
 import sys
-try:
-    import biplist as plistlib
-except:
-    import plistlib
+import subprocess
+import StringIO
 
-envvars = ['TM_SUPPORT_PATH']
+envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
 sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
 import webpreview as wp
+import help_gen
 
-CMDDIR = os.environ['TM_BUNDLE_SUPPORT']+ '/../Commands'
+# Get the static part of the documentation
+help_file = os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'help.markdown')
+with open(help_file, 'r') as f:
+     help_text = f.read()
 
-def parse_keycode(keycode):
-    # a =&gt; A
-    # A =&gt; ⇧A
-    # ~ =&gt; ⌥
-    # ^ =&gt; ⌃
-    # @ =&gt; ⌘
-    # $
-    # *
-    mappings = {
-        u'~':u'⌥',
-        u'^':u'⌃',
-        u'@':u'⌘'
-    }
-    printable = []
-    shifted = False
-    keycode = list(keycode)
-    key = keycode.pop().decode('utf-8')
-    printable.append(key.upper())
-    if key &gt;= 'A' and key &lt;= 'Z':
-        shifted = True
-        
-    while keycode:        
-        key = keycode.pop().decode('utf-8')
-        printable.append(mappings.get(key, u'?'))
+# Get the auto-generated part of the documentation
+cmd_dir = os.path.join(os.environ['TM_BUNDLE_SUPPORT'], '../Commands')
+f = StringIO.StringIO()
+save_stdout = sys.stdout
+sys.stdout = f
+help_gen.generate_keyboard_shortcut_docs(cmd_dir)
+sys.stdout = save_stdout
+shortcut_docs = f.getvalue()
+f.close()
+     
 
-    if shifted:
-        printable.append(u'⇧')
-                
-    printable.reverse()
-    
-    return printable
+print wp.html_header('Foo', 'Bar')
 
-def list_commands(cmd_dir):
-    commands = [];
-    errors = []
-    for file in os.listdir(cmd_dir):
-        path = cmd_dir + '/' +file
-        pl = plistlib.readPlist(path)
-        try:
-            commands.append((pl.get(u'keyEquivalent', u'--').decode('utf-8'), pl.get(u'name', u'..').decode('utf-8')))
-        except:
-            errors.append(path)
-    return commands, errors
-    
-print wp.html_header("TextTasks Bundle Help", "TextTasks")
-
-# Auto-generate keyboard shortcut list
-
-print u'&lt;h2&gt;TextTasks&lt;/h2&gt;'
-
-print """
-Using taskpaper(ish) syntax ...
-Overriding behaviour of return key
-"""
-
-print u'&lt;h2&gt;Keyboard shortcuts&lt;/h2&gt;'
-
-cmds, errors = list_commands(CMDDIR)
-for (key, cmd)  in cmds:
-    combo = parse_keycode(key)
-    help = u''.join(combo)
-    if not help.strip():
-        continue
-    line = u'&lt;p&gt;%s : %s&lt;/p&gt;' % (help, cmd)
-    
-    ## NOTE!
-    ## THIS is where we need to ENCODE (= turn a unicode string into bytes)
-    ## AND specify the format to use (UTF-8) in the encoding process,
-    ## the default encoding is ASCII which is SOO WRONG for unicode strings.
-    print line.encode('utf-8')
-    
-
+# Let markdown_to_html.rb do the heavy lifting
+md2help = os.path.join(os.environ['TM_SUPPORT_PATH'], 'lib/markdown_to_help.rb')     
+p = subprocess.Popen(md2help, stdin=subprocess.PIPE)
+p.stdin.write(help_text)
+p.stdin.write(shortcut_docs)
+p.stdin.close() # signal end of file
+ 
 print wp.html_footer()
-
+ 
 
 </string>
 	<key>input</key>
