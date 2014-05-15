@@ -15,6 +15,7 @@ Enhancements:
     - Dropping files should add a file reference
     - Open URL command handles refs too
   - Project template with tab trigger
+  - Arrange bundle menu in a sensible way
 
 Coding issues:
 
