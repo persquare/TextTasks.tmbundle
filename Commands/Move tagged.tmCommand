@@ -22,7 +22,9 @@ import dialog
 PROJECT_TAG = r' @project\((.+?)\)'
 
 # Get dict of projects with unified keys
-projects = {p.lower():p for p in tth.list_projects()}
+
+projects = tth.Projects()
+project_list = {p.lower():p for p in projects.list_projects()}
 
 # FIXME: Also move subtasks
 # FIXME: What to do with comments?
@@ -35,14 +37,14 @@ with sys.stdin as f:
             sys.stdout.write(line)
             continue
 
-        proj = projects.get(match.group(1).lower(), None)
+        proj = project_list.get(match.group(1).lower(), None)
         if not proj:
             sys.stdout.write(line)
             continue
     
         # strip tag from task
         task = re.sub(PROJECT_TAG, u'', line.rstrip('\r\n')).lstrip()
-        if not tth.add_tasks_to_project([task], proj):
+        if not projects.add_tasks_to_project([task], proj):
             sys.stdout.write(line)
 </string>
 	<key>input</key>

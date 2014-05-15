@@ -16,10 +16,11 @@ sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sy
 import tt_helpers as tth
 import exit_codes as exit
 import dialog  
- 
-projs = tth.list_projects()
-r = dialog.menu(projs)
-f = tth.file_for_project(r)
+
+projects = tth.Projects() 
+project_list = projects.list_projects()
+r = dialog.menu(project_list)
+f = projects.file_for_project(r)
 if f:
     os.system('open -a TextMate %s' % f)
     exit.discard()

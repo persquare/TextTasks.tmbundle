@@ -25,13 +25,14 @@ with sys.stdin as f:
         lines.append(line.decode('utf-8').rstrip())
 
 # Get destination from user
-projs = tth.list_projects()
+projects = tth.Projects()
+projs = projects.list_projects()
 proj = dialog.menu(projs)
 if not proj:
     exit.discard()
 
 # Write the tasks to destination
-if not tth.add_tasks_to_project(lines, proj):
+if not projects.add_tasks_to_project(lines, proj):
     exit.discard()
 
 # Clear selection
