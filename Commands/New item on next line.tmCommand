@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env python -S
 #encoding: utf-8
@@ -40,10 +42,14 @@ else:
       </string>
 	<key>input</key>
 	<string>line</string>
+	<key>inputFormat</key>
+	<string>text</string>
 	<key>keyEquivalent</key>
 	<string>~</string>
 	<key>name</key>
 	<string>New item on next line</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
 	<key>outputFormat</key>
 	<string>snippet</string>
 	<key>outputLocation</key>
@@ -52,5 +58,7 @@ else:
 	<string>text.texttasks</string>
 	<key>uuid</key>
 	<string>B0D19F35-8F1A-4552-AF25-5D4A2A9C1575</string>
+	<key>version</key>
+	<integer>2</integer>
 </dict>
 </plist>
