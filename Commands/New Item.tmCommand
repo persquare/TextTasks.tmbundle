@@ -8,6 +8,8 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
+"""Insert a task marker at caret. """
+
 import sys
 
 # FIXME: Doesn't check anything.

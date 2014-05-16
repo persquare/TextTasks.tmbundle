@@ -7,6 +7,8 @@
 	<key>command</key>
 	<string>#!/usr/bin/env python -S
 
+"""Toggle (cycle) status of current task from 'pending' to 'completed' to 'cancelled' to 'comment' and bacj to 'pending' by repeating command."""
+
 import os
 import sys
 import re

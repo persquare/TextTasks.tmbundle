@@ -8,10 +8,16 @@
 	<string>#!/usr/bin/env python -S
 #encoding: utf-8
 
-# For TM2:TextTasks
-# Settings:
-#  Input::Line::Text
-#  output::Replace Selection::Snippet
+"""
+The return key behaves differently depending on the caret position. There are five cases:  
+
+1) in leading whitespace before task =&gt; insert new task before line  
+2) at end of task =&gt; insert new task on new line  
+3) inside task =&gt; split task at caret and insert new task on new line  
+4) at end after empty task =&gt; clear empty task and align caret with leading space  
+5) outside a task behave as usual   
+
+"""
 
 import os
 import sys

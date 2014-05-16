@@ -8,6 +8,7 @@
 	<string>#!/usr/bin/env python -S
 # encoding: utf-8
 
+"""Create a new project file and move the selected text to it."""
 
 import os
 import sys
@@ -23,9 +24,6 @@ selection = os.environ['TM_SELECTION']
 
 range = (int(selection.split('-')[0].split(':',1)[0])-1,
                 int(selection.split('-')[-1].split(':',1)[0])-1)
-
-
-
 
 exit.show_tool_tip('%s - %s' % range)
     

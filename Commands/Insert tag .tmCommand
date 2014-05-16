@@ -8,6 +8,8 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
+"""Insert a tag at the end of the line. Tags can be selected from a pop-up list."""
+
 import sys
 import os
 

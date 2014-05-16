@@ -8,9 +8,7 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
-"""
-Show help for the TextTasks bundle
-"""
+"""Show help for the TextTasks bundle."""
 
 import os
 import sys
@@ -39,13 +37,14 @@ shortcut_docs = f.getvalue()
 f.close()
      
 
-print wp.html_header('Foo', 'Bar')
+print wp.html_header('TextTasks Bundle Help', 'TextTasks')
 
 # Let markdown_to_html.rb do the heavy lifting
 md2help = os.path.join(os.environ['TM_SUPPORT_PATH'], 'lib/markdown_to_help.rb')     
 p = subprocess.Popen(md2help, stdin=subprocess.PIPE)
-p.stdin.write(help_text)
+p.stdin.write(u'# Quickstart (keyboard shortcuts)'.encode('utf-8'))
 p.stdin.write(shortcut_docs)
+p.stdin.write(help_text)
 p.stdin.close() # signal end of file
  
 print wp.html_footer()

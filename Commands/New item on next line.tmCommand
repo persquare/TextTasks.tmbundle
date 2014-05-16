@@ -8,10 +8,7 @@
 	<string>#!/usr/bin/env python -S
 #encoding: utf-8
 
-# For TM2:TextTasks
-# Settings:
-#  Input::Line::Text
-#  output::Insert after input::Snippet
+"""Move to next line and start a new task."""
 
 import os
 import sys

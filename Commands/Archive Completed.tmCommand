@@ -8,6 +8,8 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
+"""Move all completed and cancelled tasks (including immediate comments) to the end of the file."""
+
 import os
 import sys
 import re

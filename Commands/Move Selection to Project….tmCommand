@@ -8,6 +8,8 @@
 	<string>#!/usr/bin/env python -S
 # encoding: utf-8
 
+"""Move the selected text to another project selected from a pop-up list."""
+
 import os
 import sys
 

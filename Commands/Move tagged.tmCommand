@@ -8,6 +8,11 @@
 	<string>#!/usr/bin/env python -S
 # encoding: utf-8
 
+"""
+Move all tasks tagged with `@project(&lt;name&gt;)` to the corresponding project(s). 
+Removes tag from task in destination project.
+"""
+
 import os
 import sys
 import re
