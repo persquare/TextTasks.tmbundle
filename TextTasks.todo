@@ -8,7 +8,7 @@ Feature set:
     * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
 
 Enhancements:
-  - invalid syntax highlight @next
+  - invalid syntax highlight
     trailing ':' on anything but heading is invalid
   - References
     - Allow [references][1] and [1]: http://dn.se etc
@@ -17,10 +17,13 @@ Enhancements:
     - Open URL command handles refs too
   - Project template with tab trigger
   - Arrange bundle menu in a sensible way
-  - make tag-list in 'Insert Tag a' configuration
+  - make tag-list in 'Insert Tag' a configuration
   - add some smarts to 'New item', it is too crude.
   - Rename 'New item*' to 'New task*'
   - Rename .texttask_config to .texttask_config.py
+  - Interaction with other apps
+    - Send tasks to Reminders, iCal, etc.
+    - Accept dropped file/URL references
 
 Coding issues:
 
@@ -28,7 +31,7 @@ Related:
   - Add to inbox from anywhere
     Examples of anywhere
     * Mail
-    * Menu bar
+    * Menu bar (quicknote)
     * Service
     - Document inbox command
     - Verify that inbox adds tasks at new line
