@@ -28,6 +28,9 @@ Enhancements:
     - Send tasks to Reminders, iCal, etc.
     - Accept dropped file/URL references
   - Prettify document
+  - Issue tracker
+    Allow local references like #1 to refer to bugs listed like references
+    #1: bug desciption 
 
 Coding issues:
 
