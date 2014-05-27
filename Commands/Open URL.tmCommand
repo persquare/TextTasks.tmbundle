@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env python -S
 
-"""Open another project selected from a pop-up list."""
+"""Open a link (or Markdown style reference link) in TextMate's companion window."""
 
 import os
 import sys
