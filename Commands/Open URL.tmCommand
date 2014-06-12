@@ -18,9 +18,10 @@ sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sy
 
 import exit_codes as exit
 
-MATCH_URL = r'.*?((?:https?://|file://|mailto:)\S+)'
+MATCH_URL = r'.*?((?:https?://|file://|mailto:|message://)\S+)'
 MATCH_REF_URL = r'.*?\[.+?\]\[(.+?)\]'
 MATCH_REF_TEMPLATE = r'^.*?\[%s\]:(.+)'
+MATCH_SCHEME = r'(.+?):'
 
 def expand_reference(ref):
     MATCH_REF = MATCH_REF_TEMPLATE % (ref,)
@@ -78,10 +79,16 @@ else:
 url = scan_line(line)
 if not url:
     exit.discard()
-    
+
+# Check scheme    
 # FIXME: Make this a setting?
-open_in_textmate(url)
-    
+# Will always match
+match = re.match(MATCH_SCHEME, url)
+scheme = match.group(1)
+if scheme in ['http', 'https']:
+    open_in_textmate(url)
+else:
+    os.system("open %s" % (url,))
     </string>
 	<key>input</key>
 	<string>document</string>
