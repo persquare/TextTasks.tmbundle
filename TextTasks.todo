@@ -26,7 +26,9 @@ Enhancements:
   - Rename .texttask_config to .texttask_config.py
   - Interaction with other apps
     - Send tasks to Reminders, iCal, etc.
-    - Accept dropped file/URL references
+    - Accept dropped file/URL/mail references
+    - Add tagged tasks to reminders automatically (on save?)
+      nvRemind is not what I need; write a script to do it.
   - Prettify document
   - Issue tracker
     Allow local references like #1 to refer to bugs listed like references
