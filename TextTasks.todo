@@ -9,15 +9,15 @@ Feature set:
 
 Syntax:
   - Document syntax
-    TaskPaper file format https://code.google.com/p/taskpaper-bbedit/wiki/FileFormat
-  - Handle [references][1] and [1]: http://dn.se etc
+    TaskPaper file format [definition][1]
+  + Handle [references][1] and [1]: http://dn.se etc
   - invalid syntax highlight
     trailing ':' on anything but heading is invalid
 
 Enhancements:
   - References
     - Dropping files should add a file reference
-      Needs dedicated (named in settings) section?
+      Needs dedicated (named in settings) section?  
   - Project template with tab trigger
   - Arrange bundle menu in a sensible way
   - make tag-list in 'Insert Tag' a configuration
@@ -25,6 +25,7 @@ Enhancements:
   - Rename 'New item*' to 'New task*'
   - Rename .texttask_config to .texttask_config.py
   - Interaction with other apps
+    - Check out nvRemind
     - Send tasks to Reminders, iCal, etc.
     - Accept dropped file/URL/mail references
     - Add tagged tasks to reminders automatically (on save?)
@@ -33,6 +34,7 @@ Enhancements:
   - Issue tracker
     Allow local references like #1 to refer to bugs listed like references
     #1: bug desciption 
+  - Jump back and forth between a reference and its definition
 
 Coding issues:
 
@@ -60,9 +62,20 @@ Unstructured tasks:
     Partially implemented
     * Relies on @project(<name>) tags to match with Project <name> on 1st line of .todo file
   	* Insert after Project xxx but before 1st header
+  - What does one get when different stuff is dropped onto TM?
+    * URL
+    * BibDesk refs
+    * Images
+    * e-mails
+    * reminders
+    * 
+    
 
 Notes:
   Using a symlink from ~/Library/Application Support/Avian/Bundles/TextTasks.tmbundle to actual source
+
+References:
+[1]: https://code.google.com/p/taskpaper-bbedit/wiki/FileFormat
 
 
 Archive:
