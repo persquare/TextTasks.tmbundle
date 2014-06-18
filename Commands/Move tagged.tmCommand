@@ -59,7 +59,7 @@ with sys.stdin as f:
 	<key>keyEquivalent</key>
 	<string>~@t</string>
 	<key>name</key>
-	<string>Move tagged</string>
+	<string>Move Tagged</string>
 	<key>outputCaret</key>
 	<string>heuristic</string>
 	<key>outputFormat</key>

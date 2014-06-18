@@ -44,7 +44,7 @@ else:
 	<key>keyEquivalent</key>
 	<string>~</string>
 	<key>name</key>
-	<string>New item on next line</string>
+	<string>New Task on Next Line</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>

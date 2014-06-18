@@ -97,7 +97,7 @@ else:
 	<key>keyEquivalent</key>
 	<string>@l</string>
 	<key>name</key>
-	<string>Open link</string>
+	<string>Open URL</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>

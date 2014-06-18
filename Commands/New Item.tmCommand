@@ -21,7 +21,7 @@ sys.stdout.write('- ${0}')</string>
 	<key>keyEquivalent</key>
 	<string>@i</string>
 	<key>name</key>
-	<string>New Item</string>
+	<string>New Task</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
