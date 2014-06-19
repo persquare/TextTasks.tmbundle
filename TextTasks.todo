@@ -1,12 +1,3 @@
-Feature set:
-  - Archive
-    - Add date entry when archiving?
-      Requires dedicated (named in settings) section
-    - Make archiving/deletion of cancelled tasks a setting
-  - New project from selection
-    * See 'Move Selection to Project' command
-    * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
-
 Syntax:
   - Document syntax
     TaskPaper file format [definition][1]
@@ -14,10 +5,24 @@ Syntax:
   - invalid syntax highlight
     trailing ':' on anything but heading is invalid
 
-Enhancements:
+Special sections:
   - References
-    - Dropping files should add a file reference
+    - Dropping files should add a reference
       Needs dedicated (named in settings) section?  
+    - Make indexed reference from URL
+    - Jump back and forth between a reference and its definition
+  - Issue tracker
+    Allow local references like #1 to refer to bugs listed like references
+    #1: bug desciption 
+  - Archive
+    - Add date entry when archiving?
+      Requires dedicated (named in settings) section
+    - Make archiving/deletion of cancelled tasks a setting
+
+Enhancements:    
+  - New project from selection
+    * See 'Move Selection to Project' command
+    * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
   - Project template with tab trigger
   - Arrange bundle menu in a sensible way
   - make tag-list in 'Insert Tag' a configuration
@@ -25,18 +30,16 @@ Enhancements:
   - Rename 'New item*' to 'New task*'
   - Rename .texttask_config to .texttask_config.py
   - Interaction with other apps
-    - Check out nvRemind
+    + Check out nvRemind (Not working for me)
     - Send tasks to Reminders, iCal, etc.
     - Accept dropped file/URL/mail references
     - Add tagged tasks to reminders automatically (on save?)
       nvRemind is not what I need; write a script to do it.
   - Prettify document
-  - Issue tracker
-    Allow local references like #1 to refer to bugs listed like references
-    #1: bug desciption 
-  - Jump back and forth between a reference and its definition
+  - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
 
 Coding issues:
+  - Must specify file type for dropped files
 
 Bugs:
   - links should get scoped.
@@ -51,7 +54,6 @@ Related:
     - Verify that inbox adds tasks at new line
 
 Unstructured tasks:
-  - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
   - Proper language bundle for taskpaper syntax
     Proper means: folding of comments, recursive folding of tasks
   - Fix tab-settings etc
@@ -63,10 +65,10 @@ Unstructured tasks:
     * Relies on @project(<name>) tags to match with Project <name> on 1st line of .todo file
   	* Insert after Project xxx but before 1st header
   - What does one get when different stuff is dropped onto TM?
-    * URL
-    * BibDesk refs
-    * Images
-    * e-mails
+    * URL - insert URL
+    * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
+    * File - captured by Drag Command Action (use * wildcard for filetype) 
+    * e-mails - Not possible?
     * reminders
     * 
     
