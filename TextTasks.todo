@@ -1,25 +1,25 @@
 Syntax:
   - Document syntax
     TaskPaper file format [definition][1]
-  + Handle [references][1] and [1]: http://dn.se etc
   - invalid syntax highlight
     trailing ':' on anything but heading is invalid
 
 Special sections:
   - References
     - Dropping files should add a reference
-      Needs dedicated (named in settings) section?  
+      Needs dedicated (named in settings) section?
     - Make indexed reference from URL
     - Jump back and forth between a reference and its definition
   - Issue tracker
     Allow local references like #1 to refer to bugs listed like references
-    #1: bug desciption 
-  - Archive
-    - Add date entry when archiving?
-      Requires dedicated (named in settings) section
-    - Make archiving/deletion of cancelled tasks a setting
+    #1: bug desciption
 
-Enhancements:    
+Settings:
+  - Archive with/without date
+  - Date format
+  - Section names
+
+Enhancements:
   - New project from selection
     * See 'Move Selection to Project' command
     * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
@@ -27,16 +27,15 @@ Enhancements:
   - Arrange bundle menu in a sensible way
   - make tag-list in 'Insert Tag' a configuration
   - add some smarts to 'New item', it is too crude.
-  - Rename 'New item*' to 'New task*'
   - Rename .texttask_config to .texttask_config.py
   - Interaction with other apps
-    + Check out nvRemind (Not working for me)
     - Send tasks to Reminders, iCal, etc.
     - Accept dropped file/URL/mail references
     - Add tagged tasks to reminders automatically (on save?)
       nvRemind is not what I need; write a script to do it.
   - Prettify document
   - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
+  - Some basic documentation
 
 Coding issues:
   - Must specify file type for dropped files
@@ -47,11 +46,9 @@ Bugs:
 Related:
   - Add to inbox from anywhere
     Examples of anywhere
-    * Mail
-    * Menu bar (quicknote)
-    * Service
-    - Document inbox command
-    - Verify that inbox adds tasks at new line
+    - Mail
+    - Service
+  - Document inbox command
 
 Unstructured tasks:
   - Proper language bundle for taskpaper syntax
@@ -67,11 +64,11 @@ Unstructured tasks:
   - What does one get when different stuff is dropped onto TM?
     * URL - insert URL
     * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
-    * File - captured by Drag Command Action (use * wildcard for filetype) 
+    * File - captured by Drag Command Action (use * wildcard for filetype)
     * e-mails - Not possible?
     * reminders
-    * 
-    
+    *
+
 
 Notes:
   Using a symlink from ~/Library/Application Support/Avian/Bundles/TextTasks.tmbundle to actual source
@@ -81,6 +78,16 @@ References:
 
 
 Archive:
+---- 2014-06-22 23:16:36 ----
++ Archive
++ Add date entry when archiving?
+  Requires dedicated (named in settings) section
+x Make archiving/deletion of cancelled tasks a setting
++ Handle [references][1] and [1]: http://dn.se etc
++ Rename 'New item*' to 'New task*'
++ Check out nvRemind (Not working for me)
++ Menu bar (quicknote)
++ Verify that inbox adds tasks at new line
 + Open URL command handles refs too
 + Add link support
 + Provide documentation
