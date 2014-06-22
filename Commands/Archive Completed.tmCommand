@@ -13,16 +13,22 @@
 import os
 import sys
 import re
+import datetime
 
 # Python print vs sys.stdout.write():
 # http://stackoverflow.com/q/3263672
 
+# FIXME: Read from settings
+SECTION_NAME = u'Archive'
+
 # Regexes
+NAMED_SECTION = re.compile(r"\s*%s:\s*$" % SECTION_NAME)
 COMPLETE = re.compile(r"^(\s*)([x\+] .*)$")
 COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
 COMMENT = None
 
 completed = []
+has_named_section = False
 
 with sys.stdin as f:
     for line in f:
@@ -49,9 +55,28 @@ with sys.stdin as f:
         sys.stdout.write(line.encode('utf-8'))
         sys.stdout.write(u'\n')
         
-for line in completed:
-    sys.stdout.write(line.encode('utf-8'))
-    sys.stdout.write(u'\n')
+        match = re.match(NAMED_SECTION, line)
+        if match:
+            # Found the named section
+            has_named_section = True
+            break
+
+    if not has_named_section:
+        # Create a section heading
+        sys.stdout.write(u'\n')
+        sys.stdout.write((SECTION_NAME+u':\n').encode('utf-8'))
+
+    if completed:
+        now = datetime.datetime.now()
+        now_str = now.strftime("%Y-%m-%d %H:%M:%S")    
+        sys.stdout.write(u'---- %s ----\n' % now_str.encode('utf-8')) 
+         
+    for line in completed:
+        sys.stdout.write(line.encode('utf-8'))
+        sys.stdout.write(u'\n')
+
+    for line in f:
+            sys.stdout.write(line)
     </string>
 	<key>input</key>
 	<string>document</string>
