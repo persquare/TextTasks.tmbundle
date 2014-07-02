@@ -20,28 +20,38 @@ Settings:
   - Section names
 
 Enhancements:
-  - New project from selection
+  - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
+  - Arrange bundle menu in a sensible way
+  - Add some smarts to 'New item' command, it is too crude.
+  - Make tag-list in 'Insert Tag' a configuration
+  - Make 'inbox' show up as the first entry in projects pop-up list 
+  - Implement New Project With Selection command
     * See 'Move Selection to Project' command
     * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
-  - Project template with tab trigger
-  - Arrange bundle menu in a sensible way
-  - make tag-list in 'Insert Tag' a configuration
-  - add some smarts to 'New item', it is too crude.
+  - Add project template with tab trigger
   - Rename .texttask_config to .texttask_config.py
   - Interaction with other apps
     - Send tasks to Reminders, iCal, etc.
     - Accept dropped file/URL/mail references
-    - Add tagged tasks to reminders automatically (on save?)
+    - Add tasks tagged with date/due/remind to reminders automatically on save
       nvRemind is not what I need; write a script to do it.
   - Prettify document
-  - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
   - Some basic documentation
+
+Installer script:
+  - Add callback script to settings file 
+    This is run when the settings file (Settings… from the TextTasks Bundle menu) is saved. 
+    It will add/remove the following (based on settings file)
+    - path to inbox CLI to system PATH
+    - alias for inbox.app to dock
+    - mail rules 
 
 Coding issues:
   - Must specify file type for dropped files
 
 Bugs:
   - links should get scoped.
+  - Toggle Status command doesn't treat comment correctly
 
 Related:
   - Add to inbox from anywhere
