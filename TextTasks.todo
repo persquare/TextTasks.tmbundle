@@ -24,7 +24,7 @@ Enhancements:
   - Arrange bundle menu in a sensible way
   - Add some smarts to 'New item' command, it is too crude.
   - Make tag-list in 'Insert Tag' a configuration
-  - Make 'inbox' show up as the first entry in projects pop-up list 
+  - Make 'inbox' show up as the first entry in projects pop-up list
   - Implement New Project With Selection command
     * See 'Move Selection to Project' command
     * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
@@ -40,12 +40,12 @@ Enhancements:
   - Make "Soft wrap" the default
 
 Installer script:
-  - Add callback script to settings file 
-    This is run when the settings file (Settings… from the TextTasks Bundle menu) is saved. 
+  - Add callback script to settings file
+    This is run when the settings file (Settings… from the TextTasks Bundle menu) is saved.
     It will add/remove the following (based on settings file)
     - path to inbox CLI to system PATH
     - alias for inbox.app to dock
-    - mail rules 
+    - mail rules
 
 Coding issues:
   - Must specify file type for dropped files
