@@ -11,21 +11,21 @@ import imp
 import re
 
 def _prepend_lines_to_file(lines, filename):
-    with open(filename,'r') as original: 
+    with open(filename,'r') as original:
         data = original.read()
     with open(filename, 'w') as modified:
         for line in lines:
             modified.write(line + '\n')
         modified.write(data)
-        modified.flush()    
+        modified.flush()
 
-## 
+##
 # Options
-#     
+#
 def _options_file():
-    # Find location of options file    
+    # Find location of options file
     options_file = os.environ.get('TM_TEXTTASKS_OPTIONS_FILE', '~/.texttasks_options')
-    options_file = os.path.expanduser(options_file)  
+    options_file = os.path.expanduser(options_file)
     # If no file exists at that location, copy over the default options file
     if not os.path.isfile(options_file):
         default_file = os.environ['TM_BUNDLE_SUPPORT'] + '/tt_config.py'
@@ -34,13 +34,13 @@ def _options_file():
 
 def read_options():
     return imp.load_source('options', _options_file())
-    
+
 def open_options_file():
     os.system('open -a TextMate %s' % _options_file())
-    
-## 
+
+##
 # Project file handling
-#     
+#
 class Projects(object):
     """Encapsulate TextTasks projects"""
     def __init__(self):
@@ -56,23 +56,23 @@ class Projects(object):
                 if ext in options.FILE_EXTS:
                     projects[name] = os.path.join(path, filename)
         self.projects = projects
-        
+
     def is_project_file(self, file):
         return (os.path.expandvars(file) in self.projects.values())
-        
+
     def list_projects(self):
         return self.projects.keys()
-    
+
     def file_for_project(self, proj):
         return self.projects.get(proj, None)
-    
-    def add_tasks_to_project(self, tasks, proj):          
+
+    def add_tasks_to_project(self, tasks, proj):
         filename = self.projects.get(proj, None)
         if not filename:
             return False
         _prepend_lines_to_file(tasks, filename)
         return True
-    
+
     def scan_project(self, project, regex):
         """
         Scan the project file using the regex,
@@ -113,9 +113,9 @@ if __name__ == '__main__':
     print
     print p.add_tasks_to_project(['- added task'], 'foo')
     print p.add_tasks_to_project(['- added task'], 'baz')
-    print 
+    print
     print _options_file()
-    print 
+    print
     print type(read_options())
-    
+
 
