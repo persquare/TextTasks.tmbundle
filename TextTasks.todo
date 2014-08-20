@@ -36,8 +36,9 @@ Enhancements:
     - Accept dropped file/URL/mail references
     - Add tasks tagged with date/due/remind to reminders automatically on save
       nvRemind is not what I need; write a script to do it.
-  - Prettify document
   - Some basic documentation
+  - Prettify documentation
+  - Make "Soft wrap" the default
 
 Installer script:
   - Add callback script to settings file 
