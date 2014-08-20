@@ -18,9 +18,10 @@ Settings:
   - Archive with/without date
   - Date format
   - Section names
+  - Default window size
 
 Enhancements:
-  - Collect @next, @mit, etc. tags to a 'transient' list for quick navigation
+  + Collect @next, @mit, etc. tags to a 'transient' list for quick navigation @mit
   - Arrange bundle menu in a sensible way
   - Add some smarts to 'New item' command, it is too crude.
   - Make tag-list in 'Insert Tag' a configuration

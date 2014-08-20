@@ -8,6 +8,7 @@ import sys
 import os
 import shutil
 import imp
+import re
 
 def _prepend_lines_to_file(lines, filename):
     with open(filename,'r') as original: 
@@ -72,6 +73,32 @@ class Projects(object):
         _prepend_lines_to_file(tasks, filename)
         return True
     
+    def scan_project(self, project, regex):
+        """
+        Scan the project file using the regex,
+        return list of dicts for each line that match.
+        The dicts contain 'task', 'project', 'file', 'line' keys
+        """
+        # cre = re.compile(regex)
+        file = self.file_for_project(project)
+        if not file:
+            return
+        line = 0
+        result = []
+        with open(file) as f:
+            for task in f:
+                line +=1
+                match = re.match(regex, task)
+                if match:
+                    result.append({'project':project, 'task':task.strip(), 'file':file, 'line':line})
+        return result
+
+    def scan_all_projects(self, regex):
+        result = []
+        for project in self.projects:
+            result += self.scan_project(project, regex)
+        return result
+
 if __name__ == '__main__':
     p = Projects()
     print p.is_project_file('/foo.todo')

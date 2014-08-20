@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+
+"""List tasks tagged with @mit in the HTML companion view as clickable links."""
+
+import os
+import sys
+import re
+
+envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
+
+import tt_helpers as tth
+import exit_codes as exit
+import webpreview as wp
+
+def format_output(mit):
+    TASK_REGEX = r'^\s*-\s+(.+?)(?:@\w+(?:\(.*?\))?)+\s*$'
+    FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
+    TXMT_URL = u'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
+    
+    url = TXMT_URL % (mit['file'], mit['line'], 0)
+    task = re.match(TASK_REGEX, mit['task']).group(1)
+    
+    return FMT % (mit['project'], url, task)
+
+projects = tth.Projects() 
+# General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'
+mit_list = projects.scan_all_projects(r'^\s*-\s+.+?(?:@mit(?:\(.*?\))?)+\s*$')
+if not mit_list:
+    exit.show_tool_tip("No @mit's found")
+
+# Produce output
+print wp.html_header('MITs', 'TextTasks')
+for mit in mit_list:
+    html = format_output(mit)
+    print html.encode('utf-8')
+print wp.html_footer()
+
+</string>
+	<key>input</key>
+	<string>none</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^m</string>
+	<key>name</key>
+	<string>List MITs</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>html</string>
+	<key>outputLocation</key>
+	<string>newWindow</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>2E89C723-DFCC-4B4E-9503-7FE127D4D3BA</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
