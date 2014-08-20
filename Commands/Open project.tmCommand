@@ -44,8 +44,6 @@ else:
 	<string>text</string>
 	<key>outputLocation</key>
 	<string>discard</string>
-	<key>scope</key>
-	<string>text.texttasks</string>
 	<key>uuid</key>
 	<string>8D75A4B3-4104-4B9B-AE8F-8104C78DC66E</string>
 	<key>version</key>
