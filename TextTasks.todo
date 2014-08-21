@@ -51,6 +51,7 @@ Coding issues:
   - Must specify file type for dropped files
 
 Bugs:
+  - List MIT's command doesn't work if other tags present (use regex from remind) @mit
   - links should get scoped.
   - Toggle Status command doesn't treat comment correctly
 
