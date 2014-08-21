@@ -17,7 +17,9 @@ sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sy
 
 import tt_helpers as tth
 
-tth.open_options_file()
+opts = tth.Options()
+optfile = opts.options_file()
+os.system('open -a TextMate %s' % optfile)
 </string>
 	<key>input</key>
 	<string>none</string>

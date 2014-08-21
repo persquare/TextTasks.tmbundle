@@ -22,21 +22,31 @@ def _prepend_lines_to_file(lines, filename):
 ##
 # Options
 #
-def _options_file():
-    # Find location of options file
-    options_file = os.environ.get('TM_TEXTTASKS_OPTIONS_FILE', '~/.texttasks_options')
-    options_file = os.path.expanduser(options_file)
-    # If no file exists at that location, copy over the default options file
-    if not os.path.isfile(options_file):
-        default_file = os.environ['TM_BUNDLE_SUPPORT'] + '/tt_config.py'
-        shutil.copy (default_file, options_file)
-    return options_file
+class Options(object):
+    """docstring for Settings"""
 
-def read_options():
-    return imp.load_source('options', _options_file())
+    ENV_FILE_PATH = 'TM_TEXTTASKS_OPTIONS_FILE'
+    DEFAULT_FILE_PATH = '~/.texttasks_options'
+    TEMPLATE_FILE_PATH = os.environ['TM_BUNDLE_SUPPORT'] + '/tt_config.py'
 
-def open_options_file():
-    os.system('open -a TextMate %s' % _options_file())
+    def __init__(self):
+        super(Options, self).__init__()
+        self.options = imp.load_source('options', self.options_file())
+
+    def options_file(self):
+        # Find location of options file
+        options_file = os.environ.get(self.ENV_FILE_PATH, self.DEFAULT_FILE_PATH)
+        options_file = os.path.expanduser(options_file)
+        # If no file exists at that location, copy over the default options file
+        if not os.path.isfile(options_file):
+            shutil.copy (self.TEMPLATE_FILE_PATH, options_file)
+        return options_file
+
+    def get(self, var, default=None):
+        try:
+            return getattr(self.options, var)
+        except:
+            return default
 
 ##
 # Project file handling
@@ -45,15 +55,15 @@ class Projects(object):
     """Encapsulate TextTasks projects"""
     def __init__(self):
         super(Projects, self).__init__()
-        options = read_options()
+        opts = Options()
         projects = {}
-        tt_dirs = [os.path.expandvars(p) for p in options.PROJECT_DIRS]
+        tt_dirs = [os.path.expandvars(p) for p in opts.get('PROJECT_DIRS', [])]
         if os.environ['TM_DIRECTORY'] not in tt_dirs:
             tt_dirs.insert(0, os.environ['TM_DIRECTORY'])
         for path in [p for p in tt_dirs if os.path.isdir(p)]:
             for filename in os.listdir(path):
                 (name, ext) = os.path.splitext(filename)
-                if ext in options.FILE_EXTS:
+                if ext in opts.get('FILE_EXTS', []):
                     projects[name] = os.path.join(path, filename)
         self.projects = projects
 
@@ -114,8 +124,10 @@ if __name__ == '__main__':
     print p.add_tasks_to_project(['- added task'], 'foo')
     print p.add_tasks_to_project(['- added task'], 'baz')
     print
-    print _options_file()
+    opts = Options()
+    print opts.options_file()
     print
-    print type(read_options())
+    print opts.get('foo')
+    print [x for x in opts.get('Foo', [])]
 
 
