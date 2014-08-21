@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python -S
+
+"""
+Copy tasks tagged @remind to default list in Reminders.app, change tag to @reminded.
+If date and/or time parameter is given as (2014-08-21 14:15) an alarm will be set.
+This function is automatically triggered on save.
+To customize account and list, set REMINDERS_ACCOUNT and REMINDERS_LIST in settings. 
+"""
+
+import os
+import sys
+import re
+
+envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
+
+import tt_helpers as tth
+import exit_codes as exit
+import applewrap
+
+# FIXME: Add date/time manipulating to tt_helpers
+def normalize_date(datestr):
+    """Check str for date and time and return in iso format or None if nonsens."""
+    if not datestr:
+        return
+    match = re.match(r'\s*(\d\d\d\d-\d\d-\d\d)?\s*(\d\d:\d\d)?\s*', datestr)
+    if match:
+        n = " ".join([x for x in match.groups() if x])
+        return n.strip()
+            
+
+# The TAGGED_TASK REGEX_TEMPLATE is hairy...
+# Feed it a tag to look for and it will produce a regex that will 
+# match any pending task with that tag, and capture: 
+#   1: leading space (indent)
+#   2: task
+#   3: tag argument (if any)
+TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?\s)*\s*$"
+
+# The COMMENT_TEMPLATE needs to be fed a string of spaces to form 
+# a regex that will match a comment on that indent level.
+COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
+
+reminders = applewrap.Reminders()
+account, list = reminders.get_defaults()
+
+opts = tth.Options()
+account = opts.get('REMINDERS_ACCOUNT', account)
+list = opts.get('REMINDERS_LIST', list)
+
+TAG = "remind"
+TAGGED_TASK_REGEX = TAGGED_TASK_TEMPLATE % TAG
+COMMENT_REGEX = None
+file = os.environ.get('TM_FILEPATH', None)
+notes = []
+line_no = 0
+
+with sys.stdin as f:
+    for line in f:
+        line_no += 1
+        line = line.rstrip().decode('utf-8')
+        
+        if COMMENT_REGEX:
+            # Match comment of completed task?
+            match = re.match(COMMENT_REGEX, line)
+            if match:
+                notes.append(match.group(1).strip())
+                # Write line
+                sys.stdout.write(line.encode('utf-8'))
+                sys.stdout.write(u'\n')
+                continue
+            else:
+                note = "\n".join(notes)
+                date = normalize_date(date)
+                reminders.add_new_task(account, list, task, note, date)               
+                
+        COMMENT_REGEX = None
+        # Match tagged task?
+        match = re.match(TAGGED_TASK_REGEX, line)
+        if match:
+            # Drop the indent when archiving
+            (indent, task, date) = match.groups()
+            
+            COMMENT_REGEX = re.compile(COMMENT_TEMPLATE % indent)
+            # Modifiy line so we don't create multiple reminders
+            tag = '@'+TAG
+            line = re.sub(tag, tag+'ed', line, 1)
+            if file:
+                # txmt://open?url=file://%s&amp;line=%s&amp;column=%d
+                notes = ['txmt://open?url=file://%s&amp;line=%s' % (file, line_no)]
+            else:
+                notes = []
+            
+        # write it back (sans trailing whitespace)
+        sys.stdout.write(line.encode('utf-8'))
+        sys.stdout.write(u'\n')
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@L</string>
+	<key>name</key>
+	<string>Create Reminders Entries</string>
+	<key>outputCaret</key>
+	<string>interpolateByLine</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceDocument</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>semanticClass</key>
+	<string>callback.document.will-save</string>
+	<key>uuid</key>
+	<string>CF02AA64-EEEC-4542-BCC1-695A4991356C</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
