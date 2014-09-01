@@ -58,8 +58,9 @@ class Projects(object):
         opts = Options()
         projects = {}
         tt_dirs = [os.path.expandvars(p) for p in opts.get('PROJECT_DIRS', [])]
-        if os.environ['TM_DIRECTORY'] not in tt_dirs:
-            tt_dirs.insert(0, os.environ['TM_DIRECTORY'])
+        current_dir = os.environ.get('TM_DIRECTORY')
+        if current_dir and current_dir not in tt_dirs:
+            tt_dirs.insert(0, current_dir)
         for path in [p for p in tt_dirs if os.path.isdir(p)]:
             for filename in os.listdir(path):
                 (name, ext) = os.path.splitext(filename)
