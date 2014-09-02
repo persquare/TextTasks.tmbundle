@@ -17,7 +17,40 @@
 		<key>excludedItems</key>
 		<array>
 			<string>F645D08C-3F92-4EC7-985B-450EE111FFD0</string>
+			<string>E85289ED-5C35-433E-A50C-9B73915E8662</string>
+			<string>760245DC-2210-40FB-BF29-B290CBEEEED9</string>
 		</array>
+		<key>items</key>
+		<array>
+			<string>8776A03B-6EA8-4977-9EC5-C5CE2BCD936E</string>
+			<string>B0D19F35-8F1A-4552-AF25-5D4A2A9C1575</string>
+			<string>1F2821CF-15BA-48F4-A50B-F361114D8CD9</string>
+			<string>CDA0B4BC-8458-4549-AE36-07777D29671F</string>
+			<string>------------------------------------</string>
+			<string>F2CD0002-DF7F-48CC-BEBE-9D8821494FB8</string>
+			<string>247510C1-7660-4C19-951D-25EAFEE820C4</string>
+			<string>2E89C723-DFCC-4B4E-9503-7FE127D4D3BA</string>
+			<string>CF02AA64-EEEC-4542-BCC1-695A4991356C</string>
+			<string>------------------------------------</string>
+			<string>8B16B393-7395-4522-A4ED-D237E97399E8</string>
+			<string>D80ED423-DBCA-4573-9E00-7D7CDD37262F</string>
+		</array>
+		<key>submenus</key>
+		<dict>
+			<key>CDA0B4BC-8458-4549-AE36-07777D29671F</key>
+			<dict>
+				<key>items</key>
+				<array>
+					<string>8D75A4B3-4104-4B9B-AE8F-8104C78DC66E</string>
+					<string>D72274DB-9225-4D4B-A489-0C00F2D37FFA</string>
+					<string>30552804-B1EA-4F85-BEB5-2EBEADD2943E</string>
+					<string>09048BE0-54D2-40F7-992C-F16CACA5D097</string>
+				</array>
+				<key>name</key>
+				<string>Projects</string>
+			</dict>
+		</dict>
+                
 	</dict>
 </dict>
 </plist>
