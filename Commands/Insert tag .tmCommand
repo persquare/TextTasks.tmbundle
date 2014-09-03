@@ -25,8 +25,6 @@ sys.stdout.write(line + tag.encode('utf-8'))</string>
 	<string>line</string>
 	<key>inputFormat</key>
 	<string>text</string>
-	<key>keyEquivalent</key>
-	<string>@t</string>
 	<key>name</key>
 	<string>Insert Tag </string>
 	<key>outputCaret</key>
@@ -37,6 +35,8 @@ sys.stdout.write(line + tag.encode('utf-8'))</string>
 	<string>replaceInput</string>
 	<key>scope</key>
 	<string>text.texttasks</string>
+	<key>tabTrigger</key>
+	<string>@</string>
 	<key>uuid</key>
 	<string>E85289ED-5C35-433E-A50C-9B73915E8662</string>
 	<key>version</key>
