@@ -17,8 +17,9 @@ line = sys.stdin.readline().rstrip('\r\n ')
 if line.endswith(':'):
     exit.discard()
     
-parameter = os.environ.get('TM_SELECTED_TEXT', '')    
-tag = u' @${1|mit,next,bigrock,due|}(${2:%s})${0}' % parameter.decode('utf-8')
+parameter = os.environ.get('TM_SELECTED_TEXT', '')
+taglist = os.environ.get('TT_TAG_LIST', 'mit,remind,project')   
+tag = u' @${1|%s|}(${2:%s})${0}' % (taglist, parameter.decode('utf-8'))
 
 sys.stdout.write(line + tag.encode('utf-8'))</string>
 	<key>input</key>

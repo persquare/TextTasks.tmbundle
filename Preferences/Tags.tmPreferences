@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Tags</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>settings</key>
+	<dict>
+		<key>shellVariables</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>TT_TAG_LIST</string>
+				<key>value</key>
+				<string>mit,remind,project</string>
+			</dict>
+		</array>
+	</dict>
+	<key>uuid</key>
+	<string>275E6597-0FF9-4D6C-91C3-2BC0D0C209E2</string>
+</dict>
+</plist>
