@@ -6,6 +6,7 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env python -S
+# encoding: utf-8
 
 """List tasks tagged with @mit in the HTML companion view as clickable links."""
 
@@ -28,7 +29,7 @@ def format_output(mit):
     url = TXMT_URL % (mit['file'], mit['line'], 0)
     task = re.match(TASK_REGEX, mit['task']).group(1)
     
-    return FMT % (mit['project'], url, task)
+    return FMT % (mit['project'], url, task.decode('utf-8'))
 
 projects = tth.Projects() 
 # General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'
