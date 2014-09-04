@@ -1,9 +1,3 @@
-Syntax:
-  - Document syntax
-    TaskPaper file format [definition][1]
-  - invalid syntax highlight
-    trailing ':' on anything but heading is invalid
-
 Special sections:
   - References
     - Dropping files should add a reference
@@ -24,27 +18,38 @@ Enhancements:
   - Archived items should be stripped of tags
   - Add some smarts to 'New item' command, it is too crude.
   - Make 'inbox' show up as the first entry in projects pop-up list
-  - Refine interaction with Reminders
-    - Make due date in Reminders into alerts instead?
   - Documentation
     - Some basic documentation
     - Prettify documentation
+    - Document syntax
+      TaskPaper file format [definition][1]
+  - Accept dropped file/URL/mail references
+    What does one get when different stuff is dropped onto TM?
+      * URL - insert URL
+      * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
+      * File - captured by Drag Command Action (use * wildcard for filetype)
+      * e-mails - Not possible?
+      * reminders
+      *
+  - Improve Move Tagged by including subtasks
   - Implement New Project With Selection command
     * See 'Move Selection to Project' command
     * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
-  - Interaction with other apps
-    - Send tasks to Reminders, iCal, etc.
-    - Accept dropped file/URL/mail references
   - Rename .texttask_config to .texttask_config.py
   - Add project template with tab trigger
-    - Add tasks tagged with date/due/remind to reminders automatically on save
-      nvRemind is not what I need; write a script to do it.
-  - Some basic documentation
-  - Prettify documentation
-  - Make "Soft wrap" the default
+
+Interaction with other apps:
+  - Send tasks to Reminders, iCal, etc.
   - Scan Reminders and create a (transient?) document of all accounts/lists
     Perhaps have some way to clear or transfer Reminders tasks to TextTasks
-
+  - Refine interaction with Reminders
+    - Make due date in Reminders into alerts instead?
+    - Handle due/date/remind tags differently?
+  - Add to inbox from anywhere
+    Examples of anywhere
+    - Mail
+    - Service
+  - Document inbox command
 
 Installer script:
   - Add callback script to settings file
@@ -63,31 +68,11 @@ Bugs:
   - Toggle Status command doesn't treat comment correctly
   - Helper files and some commands doesn't handle encodings correctly
 
-Related:
-  - Add to inbox from anywhere
-    Examples of anywhere
-    - Mail
-    - Service
-  - Document inbox command
-
 Unstructured tasks:
   - Proper language bundle for taskpaper syntax
     Proper means: folding of comments, recursive folding of tasks
-  - Fix tab-settings etc
-    This is in the settings file. Now use it.
   - create helper files (lexer & parser)
   	See https://github.com/bevesce/TodoFlow/blob/master/src/parser.py for some starting help
-  - send task (and subtasks) to project file command
-    Partially implemented
-    * Relies on @project(<name>) tags to match with Project <name> on 1st line of .todo file
-  	* Insert after Project xxx but before 1st header
-  - What does one get when different stuff is dropped onto TM?
-    * URL - insert URL
-    * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
-    * File - captured by Drag Command Action (use * wildcard for filetype)
-    * e-mails - Not possible?
-    * reminders
-    *
 
 
 Notes:
@@ -98,6 +83,11 @@ References:
 
 
 Archive:
+---- 2014-09-04 09:16:06 ----
+x invalid syntax highlight
+  trailing ':' on anything but heading is invalid
++ Fix tab-settings etc
+  This is in the settings file. Now use it.
 ---- 2014-09-03 22:15:24 ----
 + Make "Soft wrap" the default
   Use settings (it is possible to set environment from settings)
