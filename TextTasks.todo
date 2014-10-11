@@ -1,7 +1,7 @@
 Actions:
-- Drop the inbox CLI/applescript
++ Drop the inbox CLI/applescript
   It is probably better as an external tool.
-- Decide on how to handle settings. Is the current approach good?
++ Decide on how to handle settings. Is the current approach good?
 - Archived items should be stripped of tags
 - Improve 'New item' command, it is too crude.
   FIXME: Too crude in what sense?
@@ -9,7 +9,7 @@ Actions:
 - Implement New Project With Selection command
   * See 'Move Selection to Project' command
   * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
-- Rename .texttask_config to .texttask_config.py
+x Rename .texttask_config to .texttask_config.py
 
 
 Enhancements:
