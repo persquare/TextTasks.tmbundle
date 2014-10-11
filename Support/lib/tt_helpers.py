@@ -27,7 +27,6 @@ class Projects(object):
     """Encapsulate TextTasks projects"""
     def __init__(self):
         super(Projects, self).__init__()
-        opts = Options()
         projects = {}
         PROJECT_DIRS = os.environ.get('TT_PROJECT_DIRS', 'PWD').split(':') 
         FILE_EXTS = os.environ.get('TT_FILE_EXTS', '.todo').split(',')
