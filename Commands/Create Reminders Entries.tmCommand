@@ -11,7 +11,7 @@
 Copy tasks tagged @remind to default list in Reminders.app, change tag to @reminded.
 If date and/or time parameter is given as (2014-08-21 14:15) an alarm will be set.
 This function is automatically triggered on save.
-To customize account and list, set REMINDERS_ACCOUNT and REMINDERS_LIST in settings. 
+To customize account and list, set `REMINDERS_ACCOUNT` and `REMINDERS_LIST` in settings. 
 """
 
 import os

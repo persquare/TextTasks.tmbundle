@@ -14,21 +14,28 @@ The return key behaves differently depending on the caret position. There are fi
 4. at end after empty task => clear empty task and align caret with leading space 
 5. outside a task behave as usual
 
+## Useful commands from TextMate
+⌃⌘↑ Move line/selection up  
+⌃⌘↓ Move line/selection down  
+⌥⇥ Indent line/selection  
+⇧⌥⇥ Outdent line/selection  
+
 ## Tags
 
 ### Special tags
 
-* @project(<name>)
-  When going revising lists you can tag a task with @project(<name>) and when done, selecting "Move Tagged" will move tasks to the project corresponding to <name>.
+* **@project(*name*)**  
+  When going revising lists you can tag a task with @project(*name*) and when done, selecting "Move Tagged" will move tasks to the project corresponding to *name*.
 
-* @remind(<date>)
+* **@remind(*date*)**  
   Add the task to Reminders app, changes the tag to @reminded.
   You can set the target Reminders account and list in the settings if you have many accounts and/or lists.
 
-* @mit
+* **@mit**  
   *Most Important Things*, @mit, is a tag that is used by the List MITs command to list all tasks, regardless of project, in the HTML view. 
 
-### Configuration
+## Configuration
 
 Confinguration is done via the bundle settings, TextMate -> Bundles -> Edit Bundles…, select Settings.
+
 
