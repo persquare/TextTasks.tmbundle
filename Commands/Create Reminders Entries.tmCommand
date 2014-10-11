@@ -51,9 +51,8 @@ COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
 reminders = applewrap.Reminders()
 account, list = reminders.get_defaults()
 
-opts = tth.Options()
-account = opts.get('REMINDERS_ACCOUNT', account)
-list = opts.get('REMINDERS_LIST', list)
+account = os.environ.get('REMINDERS_ACCOUNT', account)
+list = os.environ.get('REMINDERS_LIST', list)
 
 TAG = "remind"
 TAGGED_TASK_REGEX = TAGGED_TASK_TEMPLATE % TAG

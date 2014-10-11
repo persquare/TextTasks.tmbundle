@@ -25,6 +25,8 @@ os.system('open -a TextMate %s' % optfile)
 	<string>none</string>
 	<key>inputFormat</key>
 	<string>text</string>
+	<key>isDisabled</key>
+	<true/>
 	<key>name</key>
 	<string>Settings…</string>
 	<key>outputCaret</key>

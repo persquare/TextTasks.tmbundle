@@ -19,34 +19,6 @@ def _prepend_lines_to_file(lines, filename):
         modified.write(data)
         modified.flush()
 
-##
-# Options
-#
-class Options(object):
-    """docstring for Settings"""
-
-    ENV_FILE_PATH = 'TM_TEXTTASKS_OPTIONS_FILE'
-    DEFAULT_FILE_PATH = '~/.texttasks_options'
-    TEMPLATE_FILE_PATH = os.environ['TM_BUNDLE_SUPPORT'] + '/tt_config.py'
-
-    def __init__(self):
-        super(Options, self).__init__()
-        self.options = imp.load_source('options', self.options_file())
-
-    def options_file(self):
-        # Find location of options file
-        options_file = os.environ.get(self.ENV_FILE_PATH, self.DEFAULT_FILE_PATH)
-        options_file = os.path.expanduser(options_file)
-        # If no file exists at that location, copy over the default options file
-        if not os.path.isfile(options_file):
-            shutil.copy (self.TEMPLATE_FILE_PATH, options_file)
-        return options_file
-
-    def get(self, var, default=None):
-        try:
-            return getattr(self.options, var)
-        except:
-            return default
 
 ##
 # Project file handling
@@ -57,14 +29,16 @@ class Projects(object):
         super(Projects, self).__init__()
         opts = Options()
         projects = {}
-        tt_dirs = [os.path.expandvars(p) for p in opts.get('PROJECT_DIRS', [])]
+        PROJECT_DIRS = os.environ.get('TT_PROJECT_DIRS', 'PWD').split(':') 
+        FILE_EXTS = os.environ.get('TT_FILE_EXTS', '.todo').split(',')
+        tt_dirs = [os.path.expandvars(p) for p in PROJECT_DIRS]
         current_dir = os.environ.get('TM_DIRECTORY')
         if current_dir and current_dir not in tt_dirs:
             tt_dirs.insert(0, current_dir)
         for path in [p for p in tt_dirs if os.path.isdir(p)]:
             for filename in os.listdir(path):
                 (name, ext) = os.path.splitext(filename)
-                if ext in opts.get('FILE_EXTS', []):
+                if ext in FILE_EXTS:
                     projects[name] = os.path.join(path, filename)
         self.projects = projects
 
@@ -125,10 +99,5 @@ if __name__ == '__main__':
     print p.add_tasks_to_project(['- added task'], 'foo')
     print p.add_tasks_to_project(['- added task'], 'baz')
     print
-    opts = Options()
-    print opts.options_file()
-    print
-    print opts.get('foo')
-    print [x for x in opts.get('Foo', [])]
 
 
