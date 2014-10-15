@@ -1,7 +1,4 @@
 Actions:
-+ Drop the inbox CLI/applescript
-  It is probably better as an external tool.
-+ Decide on how to handle settings. Is the current approach good?
 - Archived items should be stripped of tags
 - Improve 'New item' command, it is too crude.
   FIXME: Too crude in what sense?
@@ -9,26 +6,26 @@ Actions:
 - Implement New Project With Selection command
   * See 'Move Selection to Project' command
   * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
-x Rename .texttask_config to .texttask_config.py
 
 
 Enhancements:
   - Settings
+    - User selectable first entry in projects pop-up list
     - Archive with/without date
     - Date format
     - Section names
     - Default window size
-    - User selectable first entry in projects pop-up list
   - Documentation
-    - Some basic documentation
+    + Some basic documentation
     - Prettify documentation
     - Document syntax
       TaskPaper file format [definition][1]
-  - Accept dropped references
-    What does one get when different stuff is dropped onto TM?
-      * URL - insert URL
-      * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
-      * File - captured by Drag Command Action (use * wildcard for filetype)
+  References:
+    - Accept dropped references
+      What does one get when different stuff is dropped onto TM?
+        * URL - insert URL
+        * BibDesk refs - insert text (use BibDesk Alt-drag set to Insert URL)
+        * File - captured by Drag Command Action (use * wildcard for filetype)
     - Dropping files should add a reference
       Needs dedicated (named in settings) section?
     - Make indexed reference from URL
@@ -55,6 +52,11 @@ References:
 
 
 Archive:
+---- 2014-10-11 11:29:37 ----
++ Drop the inbox CLI/applescript
+  It is probably better as an external tool.
++ Decide on how to handle settings. Is the current approach good?
+x Rename .texttask_config to .texttask_config.py
 ---- 2014-09-04 09:16:06 ----
 x invalid syntax highlight
   trailing ':' on anything but heading is invalid
