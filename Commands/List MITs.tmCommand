@@ -14,33 +14,49 @@ import os
 import sys
 import re
 
+
 envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
 sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
 import tt_helpers as tth
 import exit_codes as exit
 import webpreview as wp
+import applewrap
 
 def format_output(mit):
     TASK_REGEX = r'^\s*-\s+(.+?)(?:@\w+(?:\(.*?\))?)+\s*$'
     FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
     TXMT_URL = u'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
-    
+
     url = TXMT_URL % (mit['file'], mit['line'], 0)
     task = re.match(TASK_REGEX, mit['task']).group(1)
-    
+
     return FMT % (mit['project'], url, task.decode('utf-8'))
 
-projects = tth.Projects() 
+def format_flagged_email(flagged):
+    FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
+    MSG_URL = u'message://&lt;%s&gt;'
+
+    url = MSG_URL % flagged.get('msg_id', u'')
+    return FMT % (flagged.get('from', u'???').decode('utf-8'), url, flagged.get('task', u'').decode('utf-8'))
+
+projects = tth.Projects()
 # General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'
 mit_list = projects.scan_all_projects(r'^\s*-\s+.+?(?:@mit(?:\(.*?\))?)+\s*$')
-if not mit_list:
-    exit.show_tool_tip("No @mit's found")
+flagged_list = applewrap.Mail().get_flagged_emails()
+if not mit_list and not flagged_list:
+    exit.show_tool_tip("No @mit's or flagged emails found")
+
 
 # Produce output
 print wp.html_header('MITs', 'TextTasks')
+print '&lt;h2&gt;Tasks&lt;/h2&gt;'
 for mit in mit_list:
     html = format_output(mit)
+    print html.encode('utf-8')
+print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'    
+for flagged in flagged_list:
+    html = format_flagged_email(flagged)
     print html.encode('utf-8')
 print wp.html_footer()
 

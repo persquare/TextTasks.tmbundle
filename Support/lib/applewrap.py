@@ -7,6 +7,7 @@
 #
 
 import sys
+import ast
 import subprocess
 from subprocess import Popen, PIPE
 
@@ -42,6 +43,37 @@ def convert_to_html(raw_text):
     # print stderr
     # print stdout
     return stdout
+
+class Mail(object):
+    """Class to simplify workin with Mail"""
+
+    def __init__(self):
+        super(Mail, self).__init__()
+
+    def get_flagged_emails(self, flag_index=0):
+        """Return a list of dicts whose keys are: task, from, and msg_id"""
+
+        script ="""
+        set newline to ASCII character 10
+        set flaggedList to "["
+        tell application "Mail"
+            set theMessages to every message in inbox whose flagged status is true and flag index is %d
+            repeat with thisMessage in theMessages
+                set fromMsg to (sender of thisMessage as string)
+                set subjMsg to (subject of thisMessage as string)
+                set msgID to message id of thisMessage
+                set info to "{'from':'" & word 1 of fromMsg & "', 'task':'" & subjMsg & "', 'msg_id':'" & msgID & "'}"
+                set flaggedList to flaggedList & info & ", "
+            end repeat
+            set flaggedList to flaggedList & "]"
+        end tell
+        return flaggedList
+        """ % flag_index
+
+        res =  osascript(script).decode('utf-8')
+        res = ast.literal_eval(res)
+        return res
+
 
 class Notes(object):
     """Class to simplify working with Notes"""
