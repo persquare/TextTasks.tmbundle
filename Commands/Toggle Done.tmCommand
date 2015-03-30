@@ -34,15 +34,20 @@ if line.endswith(':'):
 m = re.match(r'^(\s*)((?:[-\+x] )?)(.*)$', line)
 if not m:
     # Not a task =&gt; leave line as-is
-    exit.show_tool_tip('Not a match: &lt;%s&gt;' % line)
+    exit.show_tool_tip('Not a task: &lt;%s&gt;' % line)
     
 indent = m.group(1)
 task = m.group(3)
 marker = m.group(2).rstrip()
 
-# Four cases for marker: '-', '+', 'x', ''
-# Cycle though them:   -&gt; '-' -&gt; '+' -&gt; 'x' -&gt; '' -&gt;
-cycle = {'-':'+ ', '+':'x ', 'x':'', '':'- '}
+if not marker:
+    # Not a task =&gt; leave line as-is
+    exit.discard()
+
+
+# Three cases for marker: '-', '+', 'x'
+# Cycle though them: '-' -&gt; '+' -&gt; 'x' -&gt; '-' -&gt; ...
+cycle = {'-':'+ ', '+':'x ', 'x':'- '}
 marker = cycle[marker]
 
 sys.stdout.write('%s%s%s' % (indent, marker, task))
