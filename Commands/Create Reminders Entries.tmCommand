@@ -11,7 +11,7 @@
 Copy tasks tagged @remind to default list in Reminders.app, change tag to @reminded.
 If date and/or time parameter is given as (2014-08-21 14:15) an alarm will be set.
 This function is automatically triggered on save.
-To customize account and list, set `REMINDERS_ACCOUNT` and `REMINDERS_LIST` in settings. 
+To customize account and list, set `REMINDERS_ACCOUNT` and `REMINDERS_LIST` in settings.
 """
 
 import os
@@ -34,17 +34,17 @@ def normalize_date(datestr):
     if match:
         n = " ".join([x for x in match.groups() if x])
         return n.strip()
-            
+
 
 # The TAGGED_TASK REGEX_TEMPLATE is hairy...
-# Feed it a tag to look for and it will produce a regex that will 
-# match any pending task with that tag, and capture: 
+# Feed it a tag to look for and it will produce a regex that will
+# match any pending task with that tag, and capture:
 #   1: leading space (indent)
 #   2: task
 #   3: tag argument (if any)
-TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?\s)*\s*$"
+TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
 
-# The COMMENT_TEMPLATE needs to be fed a string of spaces to form 
+# The COMMENT_TEMPLATE needs to be fed a string of spaces to form
 # a regex that will match a comment on that indent level.
 COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
 
@@ -65,7 +65,7 @@ with sys.stdin as f:
     for line in f:
         line_no += 1
         line = line.rstrip().decode('utf-8')
-        
+
         if COMMENT_REGEX:
             # Match comment of completed task?
             match = re.match(COMMENT_REGEX, line)
@@ -78,15 +78,15 @@ with sys.stdin as f:
             else:
                 note = "\n".join(notes)
                 date = normalize_date(date)
-                reminders.add_new_task(account, list, task, note, date)               
-                
+                reminders.add_new_task(account, list, task, note, date)
+
         COMMENT_REGEX = None
         # Match tagged task?
         match = re.match(TAGGED_TASK_REGEX, line)
         if match:
             # Drop the indent when archiving
             (indent, task, date) = match.groups()
-            
+
             COMMENT_REGEX = re.compile(COMMENT_TEMPLATE % indent)
             # Modifiy line so we don't create multiple reminders
             tag = '@'+TAG
@@ -96,7 +96,7 @@ with sys.stdin as f:
                 notes = ['txmt://open?url=file://%s&amp;line=%s' % (file, line_no)]
             else:
                 notes = []
-            
+
         # write it back (sans trailing whitespace)
         sys.stdout.write(line.encode('utf-8'))
         sys.stdout.write(u'\n')
