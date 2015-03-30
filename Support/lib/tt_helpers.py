@@ -28,7 +28,7 @@ class Projects(object):
     def __init__(self):
         super(Projects, self).__init__()
         projects = {}
-        PROJECT_DIRS = os.environ.get('TT_PROJECT_DIRS', 'PWD').split(':') 
+        PROJECT_DIRS = os.environ.get('TT_PROJECT_DIRS', 'PWD').split(':')
         FILE_EXTS = os.environ.get('TT_FILE_EXTS', '.todo').split(',')
         tt_dirs = [os.path.expandvars(p) for p in PROJECT_DIRS]
         current_dir = os.environ.get('TM_DIRECTORY')
@@ -74,7 +74,7 @@ class Projects(object):
                 line +=1
                 match = re.match(regex, task)
                 if match:
-                    result.append({'project':project, 'task':task.strip(), 'file':file, 'line':line})
+                    result.append({'project':project, 'task':task.strip(), 'file':file, 'line':line, 'match':match})
         return result
 
     def scan_all_projects(self, regex):
