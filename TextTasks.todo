@@ -1,12 +1,13 @@
 Actions:
-- Archived items should be stripped of tags
-- Improve 'New item' command, it is too crude.
-  FIXME: Too crude in what sense?
-- Improve Move Tagged by including subtasks
-- Implement New Project With Selection command
-  * See 'Move Selection to Project' command
-  * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
+  - Toggle Status command doesn't treat comment correctly
+  - Archived items should be stripped of tags
 
+Bugs:
+  - Move Selection to Project destroys target todo file
+  - List MIT's command doesn't work if other tags present after @mit tag (use regex from remind)
+  - Links should get scoped.
+  - Helper files and some commands doesn't handle encodings correctly
+    Which ones?
 
 Enhancements:
   - Settings
@@ -20,6 +21,12 @@ Enhancements:
     - Document syntax
       TaskPaper file format [definition][1]
   - TextTasks list heading with MITs, e.g. work:ITM : Prepare
+  - Improve 'New item' command, it is too crude.
+    FIXME: Too crude in what sense?
+  - Improve Move Tagged by including subtasks
+  - Implement New Project With Selection command
+    * See 'Move Selection to Project' command
+    * Perhaps just a 'New project…' item in the pop-up list of 'Move selection'?
 
   References:
     - Accept dropped references
@@ -39,12 +46,6 @@ Interaction with other apps:
     - Make due date in Reminders into alerts instead?
     - Handle due/date/remind tags differently?
 
-Bugs:
-  - Move Selection to Project destroys target todo file @mit
-  - List MIT's command doesn't work if other tags present after @mit tag (use regex from remind)
-  - links should get scoped.
-  - Toggle Status command doesn't treat comment correctly
-  - Helper files and some commands doesn't handle encodings correctly
 
 Notes:
   Using a symlink from ~/Library/Application Support/Avian/Bundles/TextTasks.tmbundle to actual source
