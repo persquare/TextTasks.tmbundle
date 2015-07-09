@@ -45,21 +45,30 @@ TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:
 MIT_REGEX = TAGGED_TASK_TEMPLATE % 'mit'
 mit_list = projects.scan_all_projects(MIT_REGEX)
 flagged_list = applewrap.Mail().get_flagged_emails()
-if not mit_list and not flagged_list:
-    exit.show_tool_tip("No @mit's or flagged emails found")
-
 
 # Produce output
-print wp.html_header('MITs', 'TextTasks')
-print '&lt;h2&gt;Tasks&lt;/h2&gt;'
-for mit in mit_list:
-    html = format_output(mit)
-    print html.encode('utf-8')
-print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'
-for flagged in flagged_list:
-    html = format_flagged_email(flagged)
-    print html.encode('utf-8')
-print wp.html_footer()
+if not mit_list and not flagged_list:
+    text = "&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;"
+    try:
+        import subprocess
+        text += "&lt;p&gt;&lt;pre&gt;" + subprocess.check_output(['/usr/local/bin/fortune', os.environ['FORTUNE_LIST']]) + "&lt;/pre&gt;&lt;/p&gt;"
+        # text = subprocess.check_output(['/usr/local/bin/fortune', '/Users/eperspe/Source/FOSS/fortune/fortunes/fortunes'])
+    except:
+        pass
+    print wp.html_header('MITs', 'TextTasks')
+    print text
+    print wp.html_footer()
+else:
+    print wp.html_header('MITs', 'TextTasks')
+    print '&lt;h2&gt;Tasks&lt;/h2&gt;'
+    for mit in mit_list:
+        html = format_output(mit)
+        print html.encode('utf-8')
+    print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'
+    for flagged in flagged_list:
+        html = format_flagged_email(flagged)
+        print html.encode('utf-8')
+    print wp.html_footer()
 
 </string>
 	<key>input</key>
