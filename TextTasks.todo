@@ -1,10 +1,9 @@
 Actions:
-  - Toggle Status command doesn't treat comment correctly
+  + List MIT's command doesn't work if other tags present after @mit tag (use regex from remind)
   - Archived items should be stripped of tags
 
 Bugs:
   - Move Selection to Project destroys target todo file
-  - List MIT's command doesn't work if other tags present after @mit tag (use regex from remind)
   - Links should get scoped.
   - Helper files and some commands doesn't handle encodings correctly
     Which ones?
@@ -21,6 +20,7 @@ Enhancements:
     - Document syntax
       TaskPaper file format [definition][1]
   - TextTasks list heading with MITs, e.g. work:ITM : Prepare
+  - Produce a nice output when no MITs or flagged mails exists (fortune cookie)
   - Improve 'New item' command, it is too crude.
     FIXME: Too crude in what sense?
   - Improve Move Tagged by including subtasks
@@ -55,6 +55,8 @@ References:
 
 
 Archive:
+---- 2015-03-30 14:10:12 ----
++ Toggle Status command doesn't treat comment correctly
 ---- 2015-03-16 14:18:13 ----
 + Some basic documentation
 + Add Reply-to mail to TextTasks' "List MITs" command.
