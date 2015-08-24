@@ -1,8 +1,10 @@
 Actions:
   + List MIT's command doesn't work if other tags present after @mit tag (use regex from remind)
   - Archived items should be stripped of tags
+  - List upcoming tasks in MIT view
 
 Bugs:
+  - 'Toggle Done' crashes if active selection
   - Move Selection to Project destroys target todo file
   - Links should get scoped.
   - Helper files and some commands doesn't handle encodings correctly
