@@ -19,12 +19,12 @@ sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sy
 import exit_codes as exit
 
 selection = os.environ.get('TM_SELECTED_TEXT', None)
-line = os.environ.get('TM_CURRENT_LINE', None)
-line = line.rstrip('\r\n ')
-
 if selection:
     # If there is a selection I can't get access to the line?! Bail.
     exit.show_tool_tip('Selection blocks command.')
+line = os.environ.get('TM_CURRENT_LINE', None)
+line = line.rstrip('\r\n ')
+
 
 # Should not match heading
 if line.endswith(':'):
