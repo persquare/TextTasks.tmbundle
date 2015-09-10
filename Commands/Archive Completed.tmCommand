@@ -26,6 +26,12 @@ NAMED_SECTION = re.compile(r"\s*%s:\s*$" % SECTION_NAME)
 COMPLETE = re.compile(r"^(\s*)([x\+] .*)$")
 COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
 COMMENT = None
+SANS_TAGS = r"^(?:\s*)(.+?)(?:(?:\s@\w+(?:\(.*?\))?)*)\s*$"
+
+def strip_tags(line):
+    match = re.match(SANS_TAGS, line)
+    return match.group(1) if match else line
+    
 
 completed = []
 has_named_section = False
@@ -72,6 +78,7 @@ with sys.stdin as f:
         sys.stdout.write(u'---- %s ----\n' % now_str.encode('utf-8')) 
          
     for line in completed:
+        line = strip_tags(line)
         sys.stdout.write(line.encode('utf-8'))
         sys.stdout.write(u'\n')
 
