@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python -S
+	<string>#!/usr/bin/env python
 # encoding: utf-8
 
 """List tasks tagged with @mit in the HTML companion view as clickable links."""
@@ -33,11 +33,13 @@ def format_output(mit):
     return FMT % (mit['project'], url, task.decode('utf-8'))
 
 def format_flagged_email(flagged):
+    """_flagged_ is a tuple with (from, subject, message_id)"""
+    sender, task, msg_id = flagged
     FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
     MSG_URL = u'message://&lt;%s&gt;'
 
-    url = MSG_URL % flagged.get('msg_id', u'')
-    return FMT % (flagged.get('from', u'???').decode('utf-8'), url, flagged.get('task', u'').decode('utf-8'))
+    url = MSG_URL % msg_id
+    return FMT % (sender, url, task)
 
 projects = tth.Projects()
 # General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'

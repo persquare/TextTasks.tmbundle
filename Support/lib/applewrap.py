@@ -7,7 +7,7 @@
 #
 
 import sys
-import ast
+from Foundation import NSAppleScript
 import subprocess
 from subprocess import Popen, PIPE
 
@@ -51,27 +51,28 @@ class Mail(object):
         super(Mail, self).__init__()
 
     def get_flagged_emails(self, flag_index=0):
-        """Return a list of dicts whose keys are: task, from, and msg_id"""
+        """Return a list of (from, subject, message_id) tuples of mails flagged with _flag_index_."""
 
-        script ="""
-        set newline to ASCII character 10
-        set flaggedList to "["
-        tell application "Mail"
-            set theMessages to every message in inbox whose flagged status is true and flag index is %d
-            repeat with thisMessage in theMessages
-                set fromMsg to (sender of thisMessage as string)
-                set subjMsg to (subject of thisMessage as string)
-                set msgID to message id of thisMessage
-                set info to "{'from':'" & word 1 of fromMsg & "', 'task':'" & subjMsg & "', 'msg_id':'" & msgID & "'}"
-                set flaggedList to flaggedList & info & ", "
-            end repeat
-            set flaggedList to flaggedList & "]"
-        end tell
-        return flaggedList
+        script = """
+            set flaggedList to {}
+            tell application "Mail"
+            	set theMessages to every message in inbox whose flagged status is true and flag index is %d
+            	repeat with thisMessage in theMessages
+            		set fromMsg to (sender of thisMessage as string)
+            		set subjMsg to (subject of thisMessage as string)
+            		set msgID to message id of thisMessage
+            		set info to {fromMsg, subjMsg, msgID}
+            		copy info to end of flaggedList
+            	end repeat
+            end tell
+            return flaggedList
         """ % flag_index
-
-        res =  osascript(script).decode('utf-8')
-        res = ast.literal_eval(res)
+        applescript = NSAppleScript.alloc().initWithSource_(script)
+        desc, status = applescript.executeAndReturnError_(None)
+        if desc == None:
+            return []
+        mailcount = desc.numberOfItems()
+        res = [[desc.descriptorAtIndex_(i).descriptorAtIndex_(j).stringValue() for j in range(1,4)] for i in range(1, mailcount+1)]
         return res
 
 
