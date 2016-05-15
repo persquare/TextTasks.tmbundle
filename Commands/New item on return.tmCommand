@@ -39,7 +39,7 @@ col = int(os.environ.get('TM_LINE_INDEX'))
 # The zero-or-one match '- ?' in the regex below 
 # is needed since ' ' are stripped off from the end of line above, 
 # if there was no task, the ' ' after '-' is also removed.
-match = re.match(r'^(\s*)- ?(.*)$', line)
+match = re.match(r'^(\s*)[-+x] ?(.*)$', line)
 
 if not match:
     match = re.match(r'^(.+:)\s*$', line)
