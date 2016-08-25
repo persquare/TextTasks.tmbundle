@@ -15,7 +15,8 @@ def _prepend_lines_to_file(lines, filename):
         data = original.read()
     with open(filename, 'w') as modified:
         for line in lines:
-            modified.write(line + '\n')
+            lineln = line + '\n'
+            modified.write(lineln.encode('utf-8'))
         modified.write(data)
         modified.flush()
 
