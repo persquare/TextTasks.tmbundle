@@ -8,14 +8,21 @@
 	<string>#!/usr/bin/env python
 # encoding: utf-8
 
-"""Insert a task marker at caret. """
+"""Insert a task marker for current line. """
 
 import sys
+import re
 
-# FIXME: Doesn't check anything.
-sys.stdout.write('- ${0}')</string>
+# FIXME: Make sure it makes sense to itemize?
+LEADING_WS = r'(\s*)' 
+
+line = sys.stdin.read()
+indent = re.match(LEADING_WS, line).group()
+line = line.lstrip()
+
+sys.stdout.write(indent + '- ${0}' + line)</string>
 	<key>input</key>
-	<string>selection</string>
+	<string>line</string>
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>
@@ -27,7 +34,7 @@ sys.stdout.write('- ${0}')</string>
 	<key>outputFormat</key>
 	<string>snippet</string>
 	<key>outputLocation</key>
-	<string>atCaret</string>
+	<string>replaceInput</string>
 	<key>uuid</key>
 	<string>8776A03B-6EA8-4977-9EC5-C5CE2BCD936E</string>
 	<key>version</key>
