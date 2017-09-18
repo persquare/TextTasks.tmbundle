@@ -13,6 +13,7 @@
 import os
 import sys
 import re
+from datetime import datetime, date, timedelta
 
 
 envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
@@ -41,11 +42,30 @@ def format_flagged_email(flagged):
     url = MSG_URL % msg_id
     return FMT % (sender, url, task)
 
+def filter_due_list(due_list):
+    then = date.today() + timedelta(days=15)
+    new_list = []
+    for due in due_list:
+        due_string = due['match'].group(3).strip()
+        try:    
+            when = datetime.strptime(due_string[-8:], "%y-%m-%d")
+        except:
+            # Badly formatted, don't list
+            when = datetime.now() + timedelta(days=100)
+        when = when.date()
+        if when &lt; then:
+            new_list.append(due)
+    return new_list
+    
+
 projects = tth.Projects()
 # General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'
 TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
 MIT_REGEX = TAGGED_TASK_TEMPLATE % 'mit'
+DUE_REGEX = TAGGED_TASK_TEMPLATE % 'due'
 mit_list = projects.scan_all_projects(MIT_REGEX)
+due_list = projects.scan_all_projects(DUE_REGEX)
+due_list = filter_due_list(due_list)
 flagged_list = applewrap.Mail().get_flagged_emails()
 
 # Produce output
@@ -65,6 +85,10 @@ else:
     print '&lt;h2&gt;Tasks&lt;/h2&gt;'
     for mit in mit_list:
         html = format_output(mit)
+        print html.encode('utf-8')
+    print '&lt;h2&gt;Due soon&lt;/h2&gt;'
+    for due in due_list:
+        html = format_output(due)
         print html.encode('utf-8')
     print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'
     for flagged in flagged_list:
