@@ -27,7 +27,7 @@ sys.stdout.write(line + tag.encode('utf-8'))</string>
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>name</key>
-	<string>Insert Tag </string>
+	<string>Insert Tag</string>
 	<key>outputCaret</key>
 	<string>heuristic</string>
 	<key>outputFormat</key>
