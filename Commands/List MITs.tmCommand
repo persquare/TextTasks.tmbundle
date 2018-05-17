@@ -38,7 +38,7 @@ def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
     msg_id = urllib.quote("&lt;{}&gt;".format(msg_id))
-    FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt;&lt;/p&gt;'
+    FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt; &lt;/p&gt;'
     MSG_URL = u'message://{}'
     url = MSG_URL.format(msg_id)
     return FMT.format(sender, url, task)
@@ -64,12 +64,20 @@ projects = tth.Projects()
 TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
 MIT_REGEX = TAGGED_TASK_TEMPLATE % 'mit'
 DUE_REGEX = TAGGED_TASK_TEMPLATE % 'due'
+DELEGATED_REGEX = TAGGED_TASK_TEMPLATE % 'delegated'
 mit_list = projects.scan_all_projects(MIT_REGEX)
 due_list = projects.scan_all_projects(DUE_REGEX)
+delegated_list = projects.scan_all_projects(DELEGATED_REGEX)
+# Check dates
 due_list = filter_due_list(due_list)
 # Remove mits from due list
 mit_tasks = [mit['match'].group(2) for mit in mit_list]
 due_list = [due for due in due_list if due['match'].group(2) not in mit_tasks] #list(set(due_list) - set(mit_list))
+# Remove delegated from mit and due lists
+delegated_tasks = [delegated['match'].group(2) for delegated in delegated_list]
+due_list = [due for due in due_list if due['match'].group(2) not in delegated_tasks] #list(set(due_list) - set(mit_list))
+mit_list = [mit for mit in mit_list if mit['match'].group(2) not in delegated_tasks] #list(set(due_list) - set(mit_list))
+# Get flagged emails
 flagged_list = applewrap.Mail().get_flagged_emails()
 
 # Produce output
@@ -93,6 +101,10 @@ else:
     print '&lt;h2&gt;Due soon&lt;/h2&gt;'
     for due in due_list:
         html = format_output(due)
+        print html.encode('utf-8')
+    print '&lt;h2&gt;Delegated&lt;/h2&gt;'
+    for delegated in delegated_list:
+        html = format_output(delegated)
         print html.encode('utf-8')
     print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'
     for flagged in flagged_list:
