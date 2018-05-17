@@ -67,6 +67,9 @@ DUE_REGEX = TAGGED_TASK_TEMPLATE % 'due'
 mit_list = projects.scan_all_projects(MIT_REGEX)
 due_list = projects.scan_all_projects(DUE_REGEX)
 due_list = filter_due_list(due_list)
+# Remove mits from due list
+mit_tasks = [mit['match'].group(2) for mit in mit_list]
+due_list = [due for due in due_list if due['match'].group(2) not in mit_tasks] #list(set(due_list) - set(mit_list))
 flagged_list = applewrap.Mail().get_flagged_emails()
 
 # Produce output
