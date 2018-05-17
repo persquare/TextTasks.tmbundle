@@ -8,24 +8,19 @@
 	<string>Per Persson</string>
 	<key>description</key>
 	<string>New shiny bundle for X.</string>
-	<key>name</key>
-	<string>TextTasks</string>
-	<key>uuid</key>
-	<string>D133398F-2C1F-4FA5-AE13-8C11D26723FD</string>
 	<key>mainMenu</key>
 	<dict>
 		<key>excludedItems</key>
 		<array>
 			<string>F645D08C-3F92-4EC7-985B-450EE111FFD0</string>
 			<string>E85289ED-5C35-433E-A50C-9B73915E8662</string>
-			<string>760245DC-2210-40FB-BF29-B290CBEEEED9</string>
 		</array>
 		<key>items</key>
 		<array>
 			<string>8776A03B-6EA8-4977-9EC5-C5CE2BCD936E</string>
 			<string>B0D19F35-8F1A-4552-AF25-5D4A2A9C1575</string>
 			<string>1F2821CF-15BA-48F4-A50B-F361114D8CD9</string>
-			<string>CDA0B4BC-8458-4549-AE36-07777D29671F</string>
+			<string>CE76D0C6-10B7-4A5A-BB96-0183B0532F62</string>
 			<string>------------------------------------</string>
 			<string>F2CD0002-DF7F-48CC-BEBE-9D8821494FB8</string>
 			<string>247510C1-7660-4C19-951D-25EAFEE820C4</string>
@@ -37,7 +32,7 @@
 		</array>
 		<key>submenus</key>
 		<dict>
-			<key>CDA0B4BC-8458-4549-AE36-07777D29671F</key>
+			<key>CE76D0C6-10B7-4A5A-BB96-0183B0532F62</key>
 			<dict>
 				<key>items</key>
 				<array>
@@ -50,7 +45,10 @@
 				<string>Projects</string>
 			</dict>
 		</dict>
-                
 	</dict>
+	<key>name</key>
+	<string>TextTasks</string>
+	<key>uuid</key>
+	<string>D133398F-2C1F-4FA5-AE13-8C11D26723FD</string>
 </dict>
 </plist>
