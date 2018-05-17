@@ -105,6 +105,8 @@ with sys.stdin as f:
 	<string>document</string>
 	<key>inputFormat</key>
 	<string>text</string>
+	<key>isDisabled</key>
+	<true/>
 	<key>keyEquivalent</key>
 	<string>@L</string>
 	<key>name</key>
