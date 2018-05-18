@@ -43,12 +43,11 @@ def format_flagged_email(flagged):
     url = MSG_URL.format(msg_id)
     return FMT.format(sender, url, task)
 
-# FIXME: Use new tag feature
 def filter_due_list(due_list):
     then = date.today() + timedelta(days=15)
     new_list = []
     for due in due_list:
-        due_string = due['match'].group(3).strip()
+        due_string = due['due'].strip()
         try:    
             when = datetime.strptime(due_string[-8:], "%y-%m-%d")
         except:
