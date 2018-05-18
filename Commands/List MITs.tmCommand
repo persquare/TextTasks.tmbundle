@@ -30,7 +30,7 @@ def format_output(mit):
     TXMT_URL = u'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
 
     url = TXMT_URL % (mit['file'], mit['line'], 0)
-    task = mit['match'].group(2)
+    task = mit['description']
 
     return FMT % (mit['project'], url, task.decode('utf-8'))
 
@@ -43,6 +43,7 @@ def format_flagged_email(flagged):
     url = MSG_URL.format(msg_id)
     return FMT.format(sender, url, task)
 
+# FIXME: Use new tag feature
 def filter_due_list(due_list):
     then = date.today() + timedelta(days=15)
     new_list = []
@@ -58,25 +59,28 @@ def filter_due_list(due_list):
             new_list.append(due)
     return new_list
     
+def scan_all_projects_for_tag(tag):
+    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
+    regex = TAGGED_TASK_TEMPLATE % tag
+    tagged_tasks = projects.scan_all_projects(regex)
+    for task in tagged_tasks:
+        task[tag] = task['match'].group(3)
+        task['description'] = task['match'].group(2)
+    return tagged_tasks
 
 projects = tth.Projects()
-# General tag regex: r'^\s*-\s+.+?(?:@\w+(?:\(.*?\))?)+\s*$'
-TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
-MIT_REGEX = TAGGED_TASK_TEMPLATE % 'mit'
-DUE_REGEX = TAGGED_TASK_TEMPLATE % 'due'
-DELEGATED_REGEX = TAGGED_TASK_TEMPLATE % 'delegated'
-mit_list = projects.scan_all_projects(MIT_REGEX)
-due_list = projects.scan_all_projects(DUE_REGEX)
-delegated_list = projects.scan_all_projects(DELEGATED_REGEX)
+mit_list = scan_all_projects_for_tag('mit')
+due_list = scan_all_projects_for_tag('due')
+delegated_list = scan_all_projects_for_tag('delegated')
 # Check dates
 due_list = filter_due_list(due_list)
 # Remove mits from due list
-mit_tasks = [mit['match'].group(2) for mit in mit_list]
-due_list = [due for due in due_list if due['match'].group(2) not in mit_tasks] #list(set(due_list) - set(mit_list))
+mit_tasks = [mit['task'] for mit in mit_list]
+due_list = [due for due in due_list if due['task'] not in mit_tasks]
 # Remove delegated from mit and due lists
-delegated_tasks = [delegated['match'].group(2) for delegated in delegated_list]
-due_list = [due for due in due_list if due['match'].group(2) not in delegated_tasks] #list(set(due_list) - set(mit_list))
-mit_list = [mit for mit in mit_list if mit['match'].group(2) not in delegated_tasks] #list(set(due_list) - set(mit_list))
+delegated_tasks = [delegated['task'] for delegated in delegated_list]
+due_list = [due for due in due_list if due['task'] not in delegated_tasks]
+mit_list = [mit for mit in mit_list if mit['task'] not in delegated_tasks]
 # Get flagged emails
 flagged_list = applewrap.Mail().get_flagged_emails()
 
