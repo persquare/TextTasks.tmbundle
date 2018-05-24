@@ -25,16 +25,17 @@ import exit_codes as exit
 import webpreview as wp
 import applewrap
 
-def format_output(mit):
+def format_output(task):
     FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
     TXMT_URL = u'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
 
-    url = TXMT_URL % (mit['file'], mit['line'], 0)
-    task = mit['description'].decode('utf-8')
-    if 'delegated' in mit:
-        task += u" (%s)" % (mit['delegated'].decode('utf-8'),)
+    url = TXMT_URL % (task['file'], task['line'], 0)
+    description = task['description'].decode('utf-8')
+    notes = [task[key].decode('utf-8') for key in ['delegated', 'due'] if key in task]
+    if notes:
+        description += u" ({})".format(", ".join(notes))
 
-    return FMT % (mit['project'], url, task)
+    return FMT % (task['project'], url, description)
 
 def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
@@ -50,7 +51,7 @@ def filter_due_list(due_list):
     new_list = []
     for due in due_list:
         due_string = due['due'].strip()
-        try:    
+        try:
             when = datetime.strptime(due_string[-8:], "%y-%m-%d")
         except:
             # Badly formatted, don't list
@@ -59,7 +60,7 @@ def filter_due_list(due_list):
         if when &lt; then:
             new_list.append(due)
     return new_list
-    
+
 def scan_all_projects_for_tag(tag):
     TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
     regex = TAGGED_TASK_TEMPLATE % tag
@@ -69,6 +70,16 @@ def scan_all_projects_for_tag(tag):
         task['description'] = task['match'].group(2)
     return tagged_tasks
 
+def scan_all_projects_for_tags():
+    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
+    regex = TAGGED_TASK_TEMPLATE % tag
+    tagged_tasks = projects.scan_all_projects(regex)
+    for task in tagged_tasks:
+        task[tag] = task['match'].group(3)
+        task['description'] = task['match'].group(2)
+    return tagged_tasks
+
+# FIXME: Extract all tags at once, then filter on tag
 projects = tth.Projects()
 mit_list = scan_all_projects_for_tag('mit')
 due_list = scan_all_projects_for_tag('due')
