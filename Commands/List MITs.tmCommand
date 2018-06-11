@@ -59,6 +59,7 @@ def filter_due_list(due_list):
         when = when.date()
         if when &lt; then:
             new_list.append(due)
+    new_list = sorted(new_list, key=lambda k: k['due'])        
     return new_list
 
 def scan_all_projects_for_tag(tag):
