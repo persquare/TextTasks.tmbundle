@@ -31,6 +31,7 @@ class Projects(object):
         projects = {}
         PROJECT_DIRS = os.environ.get('TT_PROJECT_DIRS', 'PWD').split(':')
         FILE_EXTS = os.environ.get('TT_FILE_EXTS', '.todo').split(',')
+        EXCLUDE = [x.strip() for x in os.environ.get('TT_EXCLUDE', '').split(',') if x != '']
         tt_dirs = [os.path.expandvars(p) for p in PROJECT_DIRS]
         current_dir = os.environ.get('TM_DIRECTORY')
         if current_dir and current_dir not in tt_dirs:
@@ -38,6 +39,8 @@ class Projects(object):
         for path in [p for p in tt_dirs if os.path.isdir(p)]:
             for filename in os.listdir(path):
                 (name, ext) = os.path.splitext(filename)
+                if name in EXCLUDE:
+                    continue
                 if ext in FILE_EXTS:
                     projects[name] = os.path.join(path, filename)
         self.projects = projects
