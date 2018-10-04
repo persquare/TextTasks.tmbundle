@@ -41,10 +41,12 @@ def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
     msg_id = urllib.quote("&lt;{}&gt;".format(msg_id))
-    FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt; &lt;/p&gt;'
+    FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
     MSG_URL = u'message://{}'
+    ACTION = u'&lt;a href="x-mailactions://clear?msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
     url = MSG_URL.format(msg_id)
-    return FMT.format(sender, url, task)
+    action = ACTION.format(msg_id[3:-3])
+    return FMT.format(sender, url, task, action)
 
 def filter_due_list(due_list):
     then = date.today() + timedelta(days=15)
