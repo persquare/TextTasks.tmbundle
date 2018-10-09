@@ -44,16 +44,29 @@ def convert_to_html(raw_text):
     # print stdout
     return stdout
 
+
 class Mail(object):
     """Class to simplify workin with Mail"""
 
-    def __init__(self):
-        super(Mail, self).__init__()
-
-    def get_flagged_emails(self, flag_index=0):
-        """Return a list of (from, subject, message_id) tuples of mails flagged with _flag_index_."""
-
-        script = """
+    outlook = """
+            set flaggedList to {}
+            -- Dummy %d
+            tell application "Microsoft Outlook"
+            	set theMessages to messages of inbox whose todo flag is (not completed)
+            	repeat with thisMessage in theMessages
+            		tell thisMessage
+            			set fromMsg to address of (get sender)
+            			set subjMsg to get subject
+            			set msgID to get id
+            		end tell
+            		set info to {fromMsg, subjMsg, msgID}
+            		copy info to end of flaggedList
+            	end repeat
+            end tell
+            return flaggedList
+        """
+    
+    mail = """    
             set flaggedList to {}
             tell application "Mail"
             	set theMessages to every message in inbox whose flagged status is true and flag index is %d
@@ -66,8 +79,15 @@ class Mail(object):
             	end repeat
             end tell
             return flaggedList
-        """ % flag_index
-        applescript = NSAppleScript.alloc().initWithSource_(script)
+        """
+        
+    def __init__(self, client='mail'):
+        super(Mail, self).__init__()
+        self.script = self.outlook if client == 'outlook' else self.mail
+    
+    def get_flagged_emails(self, flag_index=0):
+        """Return a list of (from, subject, message_id) tuples of mails flagged with _flag_index_."""
+        applescript = NSAppleScript.alloc().initWithSource_(self.script  % flag_index)
         desc, status = applescript.executeAndReturnError_(None)
         if desc == None:
             return []

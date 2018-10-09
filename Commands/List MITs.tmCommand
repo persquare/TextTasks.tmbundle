@@ -103,7 +103,7 @@ delegated_tasks = [delegated['task'] for delegated in delegated_list]
 due_list = [due for due in due_list if due['task'] not in delegated_tasks]
 mit_list = [mit for mit in mit_list if mit['task'] not in delegated_tasks]
 # Get flagged emails
-flagged_list = applewrap.Mail().get_flagged_emails()
+flagged_list = applewrap.Mail(client=MAIL_CLIENT).get_flagged_emails()
 
 # Produce output
 if not mit_list and not flagged_list:
