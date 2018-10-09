@@ -10,6 +10,7 @@
 
 """List tasks tagged with @mit in the HTML companion view as clickable links."""
 
+
 import os
 import sys
 import re
@@ -24,6 +25,8 @@ import tt_helpers as tth
 import exit_codes as exit
 import webpreview as wp
 import applewrap
+
+MAIL_CLIENT = os.environ.get('TT_MAIL_CLIENT', 'mail').lower()
 
 def format_output(task):
     FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
@@ -41,11 +44,14 @@ def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
     msg_id = urllib.quote("&lt;{}&gt;".format(msg_id))
+    # if MAIL_CLIENT == 'mail':
+    msg_id = msg_id[3:-3]
     FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
-    MSG_URL = u'message://{}'
-    ACTION = u'&lt;a href="x-mailactions://clear?msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
-    url = MSG_URL.format(msg_id)
-    action = ACTION.format(msg_id[3:-3])
+    # MSG_URL = u'message://{}'
+    MAIL_OPEN = u'x-mailactions://open?client={}&amp;msgid={}'
+    MAIL_CLEAR = u'&lt;a href="x-mailactions://clear?client={}&amp;msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
+    url = MAIL_OPEN.format(MAIL_CLIENT, msg_id)
+    action = MAIL_CLEAR.format(MAIL_CLIENT, msg_id)
     return FMT.format(sender, url, task, action)
 
 def filter_due_list(due_list):

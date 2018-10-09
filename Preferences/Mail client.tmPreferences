@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Mail client</string>
+	<key>settings</key>
+	<dict>
+		<key>shellVariables</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>TT_MAIL_CLIENT</string>
+				<key>value</key>
+				<string>outlook</string>
+			</dict>
+		</array>
+	</dict>
+	<key>uuid</key>
+	<string>94055F34-52A8-4C48-9797-8F6D17449E17</string>
+</dict>
+</plist>
