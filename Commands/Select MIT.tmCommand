@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+
+import os
+import sys
+import subprocess
+
+envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
+
+import tt_helpers as tth
+import exit_codes as exit
+from plistlib import writePlistToString, readPlistFromString
+
+
+dialog = os.environ['DIALOG']
+
+def _call_dialog(command, *args):
+    """ Call the Textmate Dialog process
+    command is the command to invoke.
+    args are the strings to pass as arguments
+    a dict representing the plist returned from DIALOG is returned
+    """
+    popen_args = [dialog, command]
+    popen_args.extend(args)
+    result = subprocess.check_output(popen_args)
+    return result
+
+def present_menu(menu_items):
+    selections = [{'title':item} for item in menu_items]
+    retval = _call_dialog('menu', '--items', writePlistToString(selections))
+    d = readPlistFromString(retval) if retval else {}
+    return d.get('title')
+    
+
+def scan_all_projects_for_tag(tag):
+    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
+    regex = TAGGED_TASK_TEMPLATE % tag
+    tagged_tasks = projects.scan_all_projects(regex)
+    for task in tagged_tasks:
+        task[tag] = task['match'].group(3)
+        task['description'] = task['match'].group(2)
+    return tagged_tasks
+
+projects = tth.Projects()
+mit_list = scan_all_projects_for_tag('mit')
+# print str(mit_list).encode('utf-8')
+
+# foo = {"apa":{"info":"apa"}, "banan":{"info":"banan"}, "apelsin":{"info":"apelsin"}}
+menuitems = ["{}: {}".format(x['project'], x['description']) for x in mit_list]
+x = present_menu(menuitems)
+if x:
+    idx = menuitems.index(x)
+    print "{}:{}".format(mit_list[idx]['file'], mit_list[idx]['line'])
+    cmd = "{} -l{} {}".format(os.environ['TM_MATE'], mit_list[idx]['line'], mit_list[idx]['file'])
+    os.system(cmd)
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^@m</string>
+	<key>name</key>
+	<string>Select MIT</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>discard</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>75A8A9F4-4F7C-4AE7-94F0-28910A8A27ED</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
