@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>command</key>
+	<string>#!/usr/bin/env python
+
+import os
+import sys
+
+# puts "file://#{ENV['TM_DROPPED_FILE']}"
+filepath = os.path.abspath(os.environ['TM_DROPPED_FILE'])
+sys.stdout.write("file://"+filepath)
+
+</string>
+	<key>draggedFileExtensions</key>
+	<array>
+		<string>*</string>
+	</array>
+	<key>name</key>
+	<string>File link</string>
+	<key>output</key>
+	<string>insertAsSnippet</string>
+	<key>scope</key>
+	<string>text.texttasks</string>
+	<key>uuid</key>
+	<string>A83B7A49-A433-4AA7-B7D0-0912188692C5</string>
+</dict>
+</plist>
