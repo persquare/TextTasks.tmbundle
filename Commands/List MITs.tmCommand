@@ -43,16 +43,10 @@ def format_output(task):
 def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
-    msg_id = urllib.quote("&lt;{}&gt;".format(msg_id))
-    # if MAIL_CLIENT == 'mail':
-    msg_id = msg_id[3:-3]
+    msg_id = urllib.quote(msg_id)
     FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
-    # MSG_URL = u'message://{}'
-    # MAIL_OPEN = u'x-mailactions://open?client={}&amp;msgid={}'
-    MAIL_OPEN = u"open_mail('{}', {})"
-    # MAIL_CLEAR = u'&lt;a href="x-mailactions://clear?client={}&amp;msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
-    url = MAIL_OPEN.format(MAIL_CLIENT, msg_id)
-    # action = MAIL_CLEAR.format(MAIL_CLIENT, msg_id)
+    MAIL_OPEN = u"open_mail('{}', '{}')"
+    url = MAIL_OPEN.format(MAIL_CLIENT, str(msg_id))
     action = ""
     return FMT.format(sender, url, task, action)
 
@@ -81,15 +75,6 @@ def scan_all_projects_for_tag(tag):
         task['description'] = task['match'].group(2)
     return tagged_tasks
 
-def scan_all_projects_for_tags():
-    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
-    regex = TAGGED_TASK_TEMPLATE % tag
-    tagged_tasks = projects.scan_all_projects(regex)
-    for task in tagged_tasks:
-        task[tag] = task['match'].group(3)
-        task['description'] = task['match'].group(2)
-    return tagged_tasks
-
 # FIXME: Extract all tags at once, then filter on tag
 projects = tth.Projects()
 mit_list = scan_all_projects_for_tag('mit')
@@ -109,15 +94,8 @@ flagged_list = applewrap.Mail(client=MAIL_CLIENT).get_flagged_emails()
 
 # Produce output
 if not mit_list and not flagged_list:
-    text = "&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;"
-    try:
-        import subprocess
-        text += "&lt;p&gt;&lt;pre&gt;" + subprocess.check_output(['/usr/local/bin/fortune', os.environ['FORTUNE_LIST']]) + "&lt;/pre&gt;&lt;/p&gt;"
-        # text = subprocess.check_output(['/usr/local/bin/fortune', '/Users/eperspe/Source/FOSS/fortune/fortunes/fortunes'])
-    except:
-        pass
     print wp.html_header('MITs', 'TextTasks')
-    print text
+    print "&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;"
     print wp.html_footer()
 else:
     print wp.html_header('MITs', 'TextTasks')
@@ -133,7 +111,6 @@ else:
             obj = TextMate.system(cmd, null);
         }
     &lt;/script&gt;
-    
     ''' 
     print '&lt;h2&gt;Tasks&lt;/h2&gt;'
     for mit in mit_list:
