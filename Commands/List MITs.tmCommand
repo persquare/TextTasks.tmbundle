@@ -29,16 +29,16 @@ import applewrap
 MAIL_CLIENT = os.environ.get('TT_MAIL_CLIENT', 'mail').lower()
 
 def format_output(task):
-    FMT = u'&lt;p&gt;%s : &lt;a href="%s"&gt;%s&lt;/a&gt;&lt;/p&gt;'
-    TXMT_URL = u'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
+    FMT = u'&lt;p&gt;{project} : &lt;a href="{url}"&gt;{desc}&lt;/a&gt;&lt;/p&gt;'
+    TXMT_URL = u'txmt://open?url=file://{file}&amp;line={line}&amp;column={col}'
 
-    url = TXMT_URL % (task['file'], task['line'], 0)
+    url = TXMT_URL.format(col=1, **task)
     description = task['description'].decode('utf-8')
     notes = [task[key].decode('utf-8') for key in ['delegated', 'due'] if key in task]
     if notes:
         description += u" ({})".format(", ".join(notes))
 
-    return FMT % (task['project'], url, description)
+    return FMT.format(url=url, desc=description, **task)
 
 def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
