@@ -46,12 +46,14 @@ def format_flagged_email(flagged):
     msg_id = urllib.quote("&lt;{}&gt;".format(msg_id))
     # if MAIL_CLIENT == 'mail':
     msg_id = msg_id[3:-3]
-    FMT = u'&lt;p&gt;{} : &lt;a href="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
+    FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
     # MSG_URL = u'message://{}'
-    MAIL_OPEN = u'x-mailactions://open?client={}&amp;msgid={}'
-    MAIL_CLEAR = u'&lt;a href="x-mailactions://clear?client={}&amp;msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
+    # MAIL_OPEN = u'x-mailactions://open?client={}&amp;msgid={}'
+    MAIL_OPEN = u"open_mail('{}', {})"
+    # MAIL_CLEAR = u'&lt;a href="x-mailactions://clear?client={}&amp;msgid={}"&gt;&lt;svg width="12" height="12"&gt;&lt;rect width="100%" height="100%" fill="green" /&gt;&lt;/svg&gt;&lt;/a&gt;'
     url = MAIL_OPEN.format(MAIL_CLIENT, msg_id)
-    action = MAIL_CLEAR.format(MAIL_CLIENT, msg_id)
+    # action = MAIL_CLEAR.format(MAIL_CLIENT, msg_id)
+    action = ""
     return FMT.format(sender, url, task, action)
 
 def filter_due_list(due_list):
@@ -119,6 +121,15 @@ if not mit_list and not flagged_list:
     print wp.html_footer()
 else:
     print wp.html_header('MITs', 'TextTasks')
+    print '''
+    &lt;script&gt;
+        function open_mail(client, msgid) {
+            cmd = "mdfind com_microsoft_outlook_recordID == " + msgid + " -0 | xargs -0 open";
+            obj = TextMate.system(cmd, null);
+        }
+    &lt;/script&gt;
+    
+    ''' 
     print '&lt;h2&gt;Tasks&lt;/h2&gt;'
     for mit in mit_list:
         html = format_output(mit)
