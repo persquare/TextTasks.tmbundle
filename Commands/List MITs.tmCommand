@@ -124,7 +124,12 @@ else:
     print '''
     &lt;script&gt;
         function open_mail(client, msgid) {
-            cmd = "mdfind com_microsoft_outlook_recordID == " + msgid + " -0 | xargs -0 open";
+            if (client === "outlook") {
+                cmd = "mdfind com_microsoft_outlook_recordID == " + msgid + " -0 | xargs -0 open";
+            } else {
+                // Assume Mail.app
+                cmd = "open message://%3C" + msgid + "%3E"
+            }
             obj = TextMate.system(cmd, null);
         }
     &lt;/script&gt;
