@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/env python3
 # encoding: utf-8
 
 """List tasks tagged with @mit in the HTML companion view as clickable links."""
@@ -21,29 +21,32 @@ import urllib
 envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
 sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
-import tt_helpers as tth
+import texttasks
 import exit_codes as exit
-import webpreview as wp
+import webpreview3 as wp
 import applewrap
 
+
+# FIXME: From config
 MAIL_CLIENT = os.environ.get('TT_MAIL_CLIENT', 'mail').lower()
 
 def format_output(task):
-    FMT = u'&lt;p&gt;{project} : &lt;a href="{url}"&gt;{desc}&lt;/a&gt;&lt;/p&gt;'
-    TXMT_URL = u'txmt://open?url=file://{file}&amp;line={line}&amp;column={col}'
+    FMT = u'&lt;p&gt;{t.project} : &lt;a href="{url}"&gt;{t.description}&lt;/a&gt;&lt;/p&gt;'
+    TXMT_URL = u'txmt://open?url=file://{t.file}&amp;line={t.line}&amp;column={col}'
 
-    url = TXMT_URL.format(col=1, **task)
-    description = task['description'].decode('utf-8')
-    notes = [task[key].decode('utf-8') for key in ['delegated', 'due'] if key in task]
-    if notes:
-        description += u" ({})".format(", ".join(notes))
+    url = TXMT_URL.format(col=1, t=task)
+    #description = task['description'].decode('utf-8')
+    # FIXME
+    # notes = [task[key].decode('utf-8') for key in ['delegated', 'due'] if key in task]
+    # if notes:
+    #     description += u" ({})".format(", ".join(notes))
 
-    return FMT.format(url=url, desc=description, **task)
+    return FMT.format(url=url, t=task)
 
 def format_flagged_email(flagged):
     """_flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
-    msg_id = urllib.quote(msg_id)
+    msg_id = urllib.parse.quote(msg_id)
     FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
     MAIL_OPEN = u"open_mail('{}', '{}')"
     url = MAIL_OPEN.format(MAIL_CLIENT, str(msg_id))
@@ -51,7 +54,7 @@ def format_flagged_email(flagged):
     return FMT.format(sender, url, task, action)
 
 def filter_due_list(due_list):
-    then = date.today() + timedelta(days=15)
+    then = date.today() + timedelta(days=14)
     new_list = []
     for due in due_list:
         due_string = due['due'].strip()
@@ -66,40 +69,49 @@ def filter_due_list(due_list):
     new_list = sorted(new_list, key=lambda k: k['due'])        
     return new_list
 
-def scan_all_projects_for_tag(tag):
-    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
-    regex = TAGGED_TASK_TEMPLATE % tag
-    tagged_tasks = projects.scan_all_projects(regex)
-    for task in tagged_tasks:
-        task[tag] = task['match'].group(3)
-        task['description'] = task['match'].group(2)
-    return tagged_tasks
+# def scan_all_projects_for_tag(tag):
+#     TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
+#     regex = TAGGED_TASK_TEMPLATE % tag
+#     tagged_tasks = projects.scan_all_projects(regex)
+#     for task in tagged_tasks:
+#         task[tag] = task['match'].group(3)
+#         task['description'] = task['match'].group(2)
+#     return tagged_tasks
 
 # FIXME: Extract all tags at once, then filter on tag
-projects = tth.Projects()
-mit_list = scan_all_projects_for_tag('mit')
-due_list = scan_all_projects_for_tag('due')
-delegated_list = scan_all_projects_for_tag('delegated')
+conf = texttasks.config()
+projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
+
+scanner = texttasks.tag_scanner('mit')
+mit_list = projects.scan(scanner)
+
+then = date.today() + timedelta(days=14)
+predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
+scanner = texttasks.tag_scanner('due')
+due_list = projects.scan(scanner)
+
+scanner = texttasks.tag_scanner('delegated')
+delegated_list = projects.scan(scanner)
+
 # Check dates
-due_list = filter_due_list(due_list)
+# due_list = filter_due_list(due_list)
 # Remove mits from due list
-mit_tasks = [mit['task'] for mit in mit_list]
-due_list = [due for due in due_list if due['task'] not in mit_tasks]
+# FIXME:
+# mit_tasks = [mit['task'] for mit in mit_list]
+due_list = [due for due in due_list if due not in mit_list]
 # Remove delegated from mit and due lists
-delegated_tasks = [delegated['task'] for delegated in delegated_list]
-due_list = [due for due in due_list if due['task'] not in delegated_tasks]
-mit_list = [mit for mit in mit_list if mit['task'] not in delegated_tasks]
+# delegated_tasks = [delegated['task'] for delegated in delegated_list]
+due_list = [due for due in due_list if due not in delegated_list]
+mit_list = [mit for mit in mit_list if mit not in delegated_list]
 # Get flagged emails
-flagged_list = applewrap.Mail(client=MAIL_CLIENT).get_flagged_emails()
+flagged_list = applewrap.get_flagged_emails(conf.mail_client)
 
 # Produce output
+print(wp.html_header('MITs', 'TextTasks'))
 if not mit_list and not flagged_list:
-    print wp.html_header('MITs', 'TextTasks')
-    print "&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;"
-    print wp.html_footer()
+    print("&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;")
 else:
-    print wp.html_header('MITs', 'TextTasks')
-    print '''
+    print('''
     &lt;script&gt;
         function open_mail(client, msgid) {
             if (client === "outlook") {
@@ -111,24 +123,24 @@ else:
             obj = TextMate.system(cmd, null);
         }
     &lt;/script&gt;
-    ''' 
-    print '&lt;h2&gt;Tasks&lt;/h2&gt;'
+    ''')
+    print('&lt;h2&gt;Tasks&lt;/h2&gt;')
     for mit in mit_list:
         html = format_output(mit)
-        print html.encode('utf-8')
-    print '&lt;h2&gt;Due soon&lt;/h2&gt;'
+        print(html) #.encode('utf-8')
+    print('&lt;h2&gt;Due soon&lt;/h2&gt;')
     for due in due_list:
         html = format_output(due)
-        print html.encode('utf-8')
-    print '&lt;h2&gt;Delegated&lt;/h2&gt;'
+        print(html) # .encode('utf-8')
+    print('&lt;h2&gt;Delegated&lt;/h2&gt;')
     for delegated in delegated_list:
         html = format_output(delegated)
-        print html.encode('utf-8')
-    print '&lt;h2&gt;Flagged emails&lt;/h2&gt;'
+        print(html) #.encode('utf-8')
+    print('&lt;h2&gt;Flagged emails&lt;/h2&gt;')
     for flagged in flagged_list:
         html = format_flagged_email(flagged)
-        print html.encode('utf-8')
-    print wp.html_footer()
+        print(html) #.encode('utf-8')
+print(wp.html_footer())
 
 </string>
 	<key>input</key>
