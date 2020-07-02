@@ -26,60 +26,29 @@ import exit_codes as exit
 import webpreview3 as wp
 import applewrap
 
-
-# FIXME: From config
-MAIL_CLIENT = os.environ.get('TT_MAIL_CLIENT', 'mail').lower()
+conf = texttasks.config()
 
 def format_output(task):
-    FMT = u'&lt;p&gt;{t.project} : &lt;a href="{url}"&gt;{t.description}&lt;/a&gt;&lt;/p&gt;'
+    FMT = u'&lt;p&gt;{t.project} : &lt;a href="{url}"&gt;{t.description}&lt;/a&gt;{note}&lt;/p&gt;'
     TXMT_URL = u'txmt://open?url=file://{t.file}&amp;line={t.line}&amp;column={col}'
-
     url = TXMT_URL.format(col=1, t=task)
-    #description = task['description'].decode('utf-8')
-    # FIXME
-    # notes = [task[key].decode('utf-8') for key in ['delegated', 'due'] if key in task]
-    # if notes:
-    #     description += u" ({})".format(", ".join(notes))
-
-    return FMT.format(url=url, t=task)
+    notes = [tag['value'] for tag in task.tags if tag['name'] in ('delegated', 'due') and tag['value']]
+    annotation = " ({})".format(", ".join(notes)) if notes else ""
+    return FMT.format(url=url, t=task, note=annotation)
 
 def format_flagged_email(flagged):
-    """_flagged_ is a tuple with (from, subject, message_id)"""
+    """flagged_ is a tuple with (from, subject, message_id)"""
     sender, task, msg_id = flagged
     msg_id = urllib.parse.quote(msg_id)
-    FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt; {}&lt;/p&gt;'
+    FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt;&lt;/p&gt;'
     MAIL_OPEN = u"open_mail('{}', '{}')"
-    url = MAIL_OPEN.format(MAIL_CLIENT, str(msg_id))
-    action = ""
-    return FMT.format(sender, url, task, action)
+    url = MAIL_OPEN.format(conf.mail_client, str(msg_id))
+    return FMT.format(sender, url, task)
 
-def filter_due_list(due_list):
-    then = date.today() + timedelta(days=14)
-    new_list = []
-    for due in due_list:
-        due_string = due['due'].strip()
-        try:
-            when = datetime.strptime(due_string[-8:], "%y-%m-%d")
-        except:
-            # Badly formatted, don't list
-            when = datetime.now() + timedelta(days=100)
-        when = when.date()
-        if when &lt; then:
-            new_list.append(due)
-    new_list = sorted(new_list, key=lambda k: k['due'])        
-    return new_list
+def sort_due_list(due_list):
+    return due_list
 
-# def scan_all_projects_for_tag(tag):
-#     TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
-#     regex = TAGGED_TASK_TEMPLATE % tag
-#     tagged_tasks = projects.scan_all_projects(regex)
-#     for task in tagged_tasks:
-#         task[tag] = task['match'].group(3)
-#         task['description'] = task['match'].group(2)
-#     return tagged_tasks
 
-# FIXME: Extract all tags at once, then filter on tag
-conf = texttasks.config()
 projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 
 scanner = texttasks.tag_scanner('mit')
@@ -93,15 +62,11 @@ due_list = projects.scan(scanner)
 scanner = texttasks.tag_scanner('delegated')
 delegated_list = projects.scan(scanner)
 
-# Check dates
-# due_list = filter_due_list(due_list)
 # Remove mits from due list
-# FIXME:
-# mit_tasks = [mit['task'] for mit in mit_list]
 due_list = [due for due in due_list if due not in mit_list]
 # Remove delegated from mit and due lists
-# delegated_tasks = [delegated['task'] for delegated in delegated_list]
 due_list = [due for due in due_list if due not in delegated_list]
+# FIXME: Sort due list on date
 mit_list = [mit for mit in mit_list if mit not in delegated_list]
 # Get flagged emails
 flagged_list = applewrap.get_flagged_emails(conf.mail_client)
