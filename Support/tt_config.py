@@ -11,12 +11,12 @@
 # Environment variables such as HOME, etc. are allowed #
 # in paths, but relative paths are not allowed.             #
 # --------------------------------------------------------- #
-PROJECT_DIRS = ['${HOME}']
+PROJECT_DIRS = ['${HOME}/Dropbox/Lists']
 
 ##
 # This is a list of the extension recognized by TextTasks
 #
-FILE_EXTS = ['.todo', '.tasks']
+FILE_EXTS = ['.todo']
 
 ##
 # The dedicated inbox file
@@ -29,7 +29,7 @@ INBOX = '${HOME}/inbox.todo'
 TAGS = ['next', 'remind', 'due']
 
 ##
-# Quic-list tags and any tag with a date at most n days ahead 
+# Quick-list tags and any tag with a date at most n days ahead
 #
 QUICK_LIST_TAGS = ['next']
 QUICK_LIST_DAYS_AHEAD = 1
