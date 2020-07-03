@@ -50,5 +50,15 @@
 	<string>TextTasks</string>
 	<key>uuid</key>
 	<string>D133398F-2C1F-4FA5-AE13-8C11D26723FD</string>
+    <key>require</key>
+    <array>        
+        <dict>
+            <key>name</key>
+            <string>Python3</string>
+            <key>uuid</key>
+            <string>83DEC699-5AA9-4539-9F6D-A5BF61268973</string>
+        </dict>
+    </array>
+    
 </dict>
 </plist>
