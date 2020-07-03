@@ -5,25 +5,36 @@
 	<key>beforeRunningCommand</key>
 	<string>saveModifiedFiles</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python -S
+	<string>#!/usr/bin/env python3 -S
 
 """Open another project selected from a pop-up list."""
 
 import os
 import sys
 
-envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+if 'TM_PYTHON__BUNDLE_SUPPORT' not in os.environ:
+    exit.show_tool_tip('Python3 bundle required')
+    
+envvars = ['TM_PYTHON__BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
 sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
-import tt_helpers as tth
-import exit_codes as exit
-import dialog  
+import texttasks
 
-projects = tth.Projects() 
-project_list = projects.list_projects()
-r = dialog.menu(project_list)
-f = projects.file_for_project(r)
+from TextMate import exit_codes as exit
+from TextMate import dialog
+
+
+conf = texttasks.config()
+projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
+project_list = projects.projects
+
+r = dialog.present_menu(project_list)
+if not r:
+    exit.show_tool_tip('No selection made')
+f = projects.file_for_project(r.get('title'))
 if f:
+    # FIXME: Make opening files a command in Python3's TextMate module,
+    #        and drop os.system in favour of subprocess 
     os.system('open -a TextMate %s' % f)
     exit.discard()
 else:
