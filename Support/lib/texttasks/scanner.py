@@ -1,7 +1,6 @@
 import re
 
-from .task import make_task
-
+from .task import Task
 
 
 TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@{}(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
@@ -14,7 +13,7 @@ def tag_scanner(tag, predicate=None):
         match = re.match(regex, task_text)
         if not match:
             return
-        task = make_task(task_text, context)
+        task = Task(task_text, context)
         if predicate is None:
             return task
         operands = [t['value'] for t in task.tags if t['name'] == tag and t['value']]
