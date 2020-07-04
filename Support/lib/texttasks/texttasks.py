@@ -42,6 +42,10 @@ class TextTasks(object):
                     continue
                 yield matching
 
+    def parse(self, project):
+        from .scanner import full_scanner
+        return [t for t in self._project_lines(project, full_scanner())]
+
     def scan_project(self, project, scanner):
         """
         Scan the project file using the scanner,

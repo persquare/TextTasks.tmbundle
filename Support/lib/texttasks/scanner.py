@@ -25,6 +25,10 @@ def tag_scanner(tag, predicate=None):
 
     return scanner
 
+def full_scanner():
+    return Task
+
+
 
 
 
