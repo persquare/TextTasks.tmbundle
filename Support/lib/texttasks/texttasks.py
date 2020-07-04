@@ -24,11 +24,11 @@ class TextTasks(object):
     def projects(self):
         return list(self._projects.keys())
 
-    def _file_for_project(self, proj):
+    def file_for_project(self, proj):
         return self._projects.get(proj, None)
 
     def _project_lines(self, project, scanner):
-        file = self._file_for_project(project)
+        file = self.file_for_project(project)
         context = {
             "project": project,
             "file": file,
