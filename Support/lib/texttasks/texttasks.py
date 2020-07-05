@@ -3,6 +3,10 @@
 
 import os
 
+from .scanner import full_scanner
+from .task import Status, Project
+
+
 class TextTasks(object):
 
     """Encapsulate TextTasks projects"""
@@ -27,14 +31,18 @@ class TextTasks(object):
     def file_for_project(self, proj):
         return self._projects.get(proj, None)
 
-    def _project_lines(self, project, scanner):
+    def _context_for_project(self, project):
         file = self.file_for_project(project)
         context = {
             "project": project,
             "file": file,
             "line": 0,
         }
-        with open(file, encoding='utf8') as f:
+        return context
+
+    def _project_lines(self, project, scanner):
+        context = self._context_for_project(project)
+        with open(context['file'], encoding='utf8') as f:
             for task in f:
                 context['line'] +=1
                 matching = scanner(task, context)
@@ -43,8 +51,42 @@ class TextTasks(object):
                 yield matching
 
     def parse(self, project):
-        from .scanner import full_scanner
         return [t for t in self._project_lines(project, full_scanner())]
+
+    def parse_folded(self, project):
+        proj = Project(self._context_for_project(project))
+        proj.indent = -1
+        stack = [proj]
+        indent = 0
+        for t in self._project_lines(project, full_scanner()):
+            # Nothing special to do for COMMENT, BLANK, or task with same indent
+            if t.status is Status.ERROR:
+                raise Exception(str(t))
+            if t.status is Status.HEADING:
+                # Reset tree
+                stack = [proj]
+                indent = 0
+            elif t.status in [Status.TODO, Status.DONE, Status.CANCELLED] \
+                 and t.indent != indent:
+                # Now indentation becomes important...
+                # 1. increase
+                if t.indent > indent:
+                    # move last subtask from parent task to TOS
+                    grandparent = stack[-1]
+                    if grandparent.subtasks:
+                        parent = grandparent.subtasks[-1]
+                        stack.append(parent)
+                    indent = t.indent
+                # 2. decrease
+                else: # t.indent < indent
+                    # unroll stack until indent < t.indent
+                    indent = t.indent
+                    while stack[-1].indent >= indent:
+                        stack.pop()
+            # Append task at the appropriate level
+            stack[-1].subtasks.append(t)
+
+        return proj
 
     def scan_project(self, project, scanner):
         """

@@ -8,7 +8,8 @@ class Status(Enum):
     CANCELLED = 3
     COMMENT = 4
     HEADING = 5
-    ERROR = 6
+    PROJECT = 6
+    ERROR = 7
 
 
     @classmethod
@@ -41,7 +42,6 @@ class Task(object):
         self.status = Status.BLANK
         self.description = ""
         self.tags = []
-        self.comments = []
         self.subtasks = []
         self.parse(raw)
 
@@ -91,6 +91,19 @@ class Task(object):
             self.status = Status.ERROR
             self.description = f"Error -> {raw}"
 
+class Project(Task):
+    """docstring for Project"""
+    def __init__(self, context):
+        super().__init__("", context)
+        self.line = 0
+        self.status = Status.PROJECT
+
+    def __str__(self):
+        return f"Project:'{self.project}' [{self.file}]"
+
+    def parse(self, raw):
+        pass
+
 if __name__ == '__main__':
     s = Status.DONE
     print(s)
@@ -123,5 +136,13 @@ if __name__ == '__main__':
             print("status", t.status)
             print("description", t.description)
             print("tags", t.tags)
+
+    p = Project(ctx)
+    print(p)
+    for raw in tests:
+        t = Task(raw, ctx)
+        p.subtasks.append(t)
+
+
 
 
