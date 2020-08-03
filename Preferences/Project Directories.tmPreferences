@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Project Directories</string>
+	<key>settings</key>
+	<dict>
+		<key>shellVariables</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>TT_PROJECT_DIRS</string>
+				<key>value</key>
+				<array>
+					<string>${HOME}/Dropbox/Lists</string>
+				</array>
+			</dict>
+			<dict>
+				<key>name</key>
+				<string>TT_FILE_EXTS</string>
+				<key>value</key>
+				<array>
+					<string>.todo</string>
+				</array>
+			</dict>
+		</array>
+	</dict>
+	<key>uuid</key>
+	<string>54A8B864-7DF9-44B5-9DAE-BD01DEC231B4</string>
+</dict>
+</plist>

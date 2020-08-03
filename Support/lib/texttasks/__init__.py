@@ -3,3 +3,4 @@ from .scanner import tag_scanner
 from .predicates import date_predicate, substring_predicate
 from .config import config
 from .task import Status
+from .parser import parse

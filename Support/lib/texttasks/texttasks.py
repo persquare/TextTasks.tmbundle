@@ -60,13 +60,18 @@ class TextTasks(object):
         indent = 0
         for t in self._project_lines(project, full_scanner()):
             # Nothing special to do for COMMENT, BLANK, or task with same indent
+            # FIXME: COMMENT should be subtask of latest task or heading
+            # FIXME: Headings should be appended to TOS
             if t.status is Status.ERROR:
                 raise Exception(str(t))
             if t.status is Status.HEADING:
                 # Reset tree
                 stack = [proj]
                 indent = 0
-            elif t.status in [Status.TODO, Status.DONE, Status.CANCELLED] \
+                stack[-1].subtasks.append(t)
+                stack.append(t)
+                continue
+            if t.status in [Status.TODO, Status.DONE, Status.CANCELLED] \
                  and t.indent != indent:
                 # Now indentation becomes important...
                 # 1. increase
@@ -80,8 +85,9 @@ class TextTasks(object):
                 # 2. decrease
                 else: # t.indent < indent
                     # unroll stack until indent < t.indent
+                    # FIXME: Don't unroll past heading
                     indent = t.indent
-                    while stack[-1].indent >= indent:
+                    while stack[-1].indent >= indent and stack[-1].status is not Status.HEADING:
                         stack.pop()
             # Append task at the appropriate level
             stack[-1].subtasks.append(t)
