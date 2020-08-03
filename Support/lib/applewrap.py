@@ -11,7 +11,7 @@ outlook = """
         		tell thisMessage
         			set fromMsg to address of (get sender)
         			set subjMsg to get subject
-        			set msgID to get id
+        			set msgID to (get id) as text
         		end tell
         		set info to {quoted form of fromMsg, quoted form of subjMsg, quoted form of msgID}
         		copy info to end of flaggedList
