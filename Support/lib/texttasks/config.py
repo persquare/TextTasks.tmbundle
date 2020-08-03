@@ -11,5 +11,7 @@ def config():
     if current_dir and current_dir not in project_dirs:
         project_dirs.insert(0, current_dir)
 
-    return Config(project_dirs, file_exts, 'mail')
+    mail_client = os.environ.get('TT_MAIL_CLIENT', 'mail')
+
+    return Config(project_dirs, file_exts, mail_client)
 
