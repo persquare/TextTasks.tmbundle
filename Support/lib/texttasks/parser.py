@@ -11,50 +11,67 @@ def _project_lines(context, scanner):
             yield matching
 
 
+class Parser(object):
+    """docstring for Parser"""
+    def __init__(self, filename):
+        super().__init__()
+        self.ctx = {
+            "project": 'dummy',
+            "file": filename,
+            "line": 0,
+        }
+        proj = Project(self.ctx)
+        proj.indent = -1
+        self.stack = [proj]
+        self.indent = 0
+
+    def _push(self, item):
+        self.stack.append(item)
+
+    def _pop(self):
+        return self.stack.pop()
+
+    def _add(self, item):
+        self.stack[-1].subtasks.append(item)
+
+    def _peek(self):
+        return self.stack[-1]
+
+    def _unroll(self, indent):
+        while self._peek().indent >= indent:
+            self._pop()
+
+    def _unroll_to_heading(self):
+        while self._peek().status not in (Status.HEADING, Status.PROJECT):
+            self._pop()
+
+    def _reset(self):
+        self.stack = self.stack[:1]
+        self.indent = 0
+
+    def parse(self):
+        for t in _project_lines(self.ctx, Task):
+            if t.status is Status.HEADING:
+                self._reset()
+                self._add(t)
+                self._push(t)
+            elif t.status in (Status.COMMENT, Status.BLANK):
+                self._add(t)
+            elif t.status in (Status.TODO, Status.DONE, Status.CANCELLED):
+                if t.indent == 0:
+                    self._unroll_to_heading()
+                elif t.indent < self.indent:
+                    self._unroll(t.indent)
+                elif t.indent == self.indent:
+                    self._pop()
+                self._add(t)
+                self._push(t)
+                self.indent = t.indent
+            else:
+                raise Exception(str(t))
+        return self.stack[0]
+
 def parse(filename):
-    ctx = {
-        "project": 'dummy',
-        "file": filename,
-        "line": 0,
-    }
+    p = Parser(filename)
+    return p.parse()
 
-    proj = Project(ctx)
-    proj.indent = -1
-    stack = [proj]
-    indent = 0
-
-    for t in _project_lines(ctx, Task):
-        # Nothing special to do for COMMENT, BLANK, or task with same indent
-        # FIXME: COMMENT should be subtask of latest task or heading
-        # FIXME: Headings should be appended to TOS
-        if t.status is Status.ERROR:
-            raise Exception(str(t))
-        if t.status is Status.HEADING:
-            # Reset tree
-            stack = [proj]
-            indent = 0
-            stack[-1].subtasks.append(t)
-            stack.append(t)
-            continue
-        if t.status in [Status.TODO, Status.DONE, Status.CANCELLED] \
-             and t.indent != indent:
-            # Now indentation becomes important...
-            # 1. increase
-            if t.indent > indent:
-                # move last subtask from parent task to TOS
-                grandparent = stack[-1]
-                if grandparent.subtasks:
-                    parent = grandparent.subtasks[-1]
-                    stack.append(parent)
-                indent = t.indent
-            # 2. decrease
-            else: # t.indent < indent
-                # unroll stack until indent < t.indent
-                # FIXME: Don't unroll past heading
-                indent = t.indent
-                while stack[-1].indent >= indent and stack[-1].status is not Status.HEADING:
-                    stack.pop()
-        # Append task at the appropriate level
-        stack[-1].subtasks.append(t)
-
-    return proj

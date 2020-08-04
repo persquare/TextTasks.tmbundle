@@ -43,11 +43,12 @@ class Task(object):
         self.description = ""
         self.tags = []
         self.subtasks = []
+        self.raw = raw.rstrip('\r\n')
         self.parse(raw)
 
     def __str__(self):
-        if not self.status:
-            return ""
+        if self.status is Status.BLANK:
+            retval = ""
         if self.status in [Status.TODO, Status.DONE, Status.CANCELLED]:
             tags = " ".join(f"@{t['name']}" + (f"({t['value']})" if t['value'] is not None else "") for t in self.tags)
             return f"{' '*self.indent}{self.status} {self.description} {tags}".rstrip()
@@ -98,8 +99,17 @@ class Project(Task):
         self.line = 0
         self.status = Status.PROJECT
 
+    def _format(self, task, lines):
+        if task.status is not Status.PROJECT:
+            lines.append(str(task))
+        for t in task.subtasks:
+            self._format(t, lines)
+
     def __str__(self):
-        return f"Project:'{self.project}' [{self.file}]"
+        lines = []
+        self._format(self, lines)
+        retval = "\n".join(lines)
+        return retval
 
     def parse(self, raw):
         pass
