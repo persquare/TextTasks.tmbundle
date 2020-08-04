@@ -99,17 +99,15 @@ class Project(Task):
         self.line = 0
         self.status = Status.PROJECT
 
-    def _format(self, task, lines):
+    def _format(self, task):
         if task.status is not Status.PROJECT:
-            lines.append(str(task))
+            yield str(task)
         for t in task.subtasks:
-            self._format(t, lines)
+            yield from self._format(t)
 
     def __str__(self):
-        lines = []
-        self._format(self, lines)
-        retval = "\n".join(lines)
-        return retval
+        lines = [line for line in self._format(self)]
+        return "\n".join(lines)
 
     def parse(self, raw):
         pass
