@@ -8,11 +8,10 @@ outlook = """
         tell application "Microsoft Outlook"
         	set theMessages to messages of inbox whose todo flag is (not completed)
         	repeat with thisMessage in theMessages
-        		tell thisMessage
-        			set fromMsg to address of (get sender)
-        			set subjMsg to get subject
-        			set msgID to (get id) as text
-        		end tell
+        		set theSender to sender of thisMessage
+        		set fromMsg to address of theSender
+        		set subjMsg to subject of thisMessage
+        		set msgID to id of thisMessage as string
         		set info to {quoted form of fromMsg, quoted form of subjMsg, quoted form of msgID}
         		copy info to end of flaggedList
         	end repeat
