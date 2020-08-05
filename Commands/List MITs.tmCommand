@@ -8,7 +8,14 @@
 	<string>#!/usr/bin/env python3
 # encoding: utf-8
 
-"""List tasks tagged with @mit in the HTML companion view as clickable links."""
+"""
+Provide an overview of important tasks.
+
+List tasks tagged with @mit, @due, or @delegated as well as flagged emails 
+in the HTML companion view as clickable links.
+How many days to look ahead for due tasks is controlled by TT_DUE_LOOKAHEAD
+and mail client is controlled by TT_MAIL_CLIENT, see Bundle -&gt; Settings.
+"""
 
 
 import os
