@@ -5,88 +5,33 @@
 	<key>beforeRunningCommand</key>
 	<string>saveActiveFile</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/env python3
 # encoding: utf-8
 
 """Move all completed and cancelled tasks (including immediate comments) to the end of the file."""
 
 import os
 import sys
-import re
-import datetime
 
-# Python print vs sys.stdout.write():
-# http://stackoverflow.com/q/3263672
-
-# FIXME: Read from settings
-SECTION_NAME = u'Archive'
-
-# Regexes
-NAMED_SECTION = re.compile(r"\s*%s:\s*$" % SECTION_NAME)
-COMPLETE = re.compile(r"^(\s*)([x\+] .*)$")
-COMMENT_TEMPLATE = r"^%s(  (?!\+|-|x).*)$"
-COMMENT = None
-SANS_TAGS = r"^(?:\s*)(.+?)(?:(?:\s@\w+(?:\(.*?\))?)*)\s*$"
-
-def strip_tags(line):
-    match = re.match(SANS_TAGS, line)
-    return match.group(1) if match else line
+if 'TM_PYTHON__BUNDLE_SUPPORT' not in os.environ:
+    exit.show_tool_tip('Python3 bundle required')
     
+envvars = ['TM_PYTHON__BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
+sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
 
-completed = []
-has_named_section = False
+import texttasks
+from TextMate import exit_codes as exit
 
-with sys.stdin as f:
-    for line in f:
-        line = line.rstrip().decode('utf-8')
-        if COMMENT:
-            # Match comment of completed task?
-            match = re.match(COMMENT, line)
-            if match:
-                completed.append(match.group(1))
-                continue
-                
-        COMMENT = None
-        # Match completed task?
-        match = re.match(COMPLETE, line)
-        if match:
-            # Drop the indent when archiving
-            completed.append(match.group(2))
-            indent = match.group(1)
-            COMMENT = re.compile(COMMENT_TEMPLATE % indent)
-            continue
-    
-        # Line is not completed nor comment of completed =&gt;
-        # write it back (sans trailing whitespace)
-        sys.stdout.write(line.encode('utf-8'))
-        sys.stdout.write(u'\n')
-        
-        match = re.match(NAMED_SECTION, line)
-        if match:
-            # Found the named section
-            has_named_section = True
-            break
-
-    if not has_named_section:
-        # Create a section heading
-        sys.stdout.write(u'\n')
-        sys.stdout.write((SECTION_NAME+u':\n').encode('utf-8'))
-
-    if completed:
-        now = datetime.datetime.now()
-        now_str = now.strftime("%Y-%m-%d %H:%M:%S")    
-        sys.stdout.write(u'---- %s ----\n' % now_str.encode('utf-8')) 
-         
-    for line in completed:
-        line = strip_tags(line)
-        sys.stdout.write(line.encode('utf-8'))
-        sys.stdout.write(u'\n')
-
-    for line in f:
-            sys.stdout.write(line)
-    </string>
+try:
+    filepath = os.environ['TM_FILEPATH']
+except:
+    exit.show_tool_tip(f"Failed to parse file '{os.environ.get('TM_DISPLAYNAME', '???')}'")
+proj = texttasks.parse(filepath)
+proj.archive()
+print(proj)
+</string>
 	<key>input</key>
-	<string>document</string>
+	<string>none</string>
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>

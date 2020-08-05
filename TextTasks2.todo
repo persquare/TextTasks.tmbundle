@@ -1,4 +1,4 @@
-- Make archive a function of texttasks module
++ Make archive a function of texttasks module
 - fix Select Due/MIT
 - Rename List MITs to Show Overview
 - Clean up Help
