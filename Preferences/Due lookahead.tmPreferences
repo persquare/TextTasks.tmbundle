@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Due lookahead</string>
+	<key>settings</key>
+	<dict>
+		<key>shellVariables</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>TT_DUE_LOOKAHEAD</string>
+				<key>value</key>
+				<integer>31</integer>
+			</dict>
+		</array>
+	</dict>
+	<key>uuid</key>
+	<string>C17538B8-BEC3-4786-B4D0-A5735B1695E7</string>
+</dict>
+</plist>

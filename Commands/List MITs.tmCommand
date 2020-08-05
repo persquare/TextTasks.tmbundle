@@ -57,9 +57,10 @@ projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 scanner = texttasks.tag_scanner('mit')
 mit_list = projects.scan(scanner)
 
-then = date.today() + timedelta(days=14)
+lookahead = int(os.environ.get('TT_DUE_LOOKAHEAD', 14))
+then = date.today() + timedelta(days=lookahead)
 predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
-scanner = texttasks.tag_scanner('due')
+scanner = texttasks.tag_scanner('due', predicate)
 due_list = projects.scan(scanner)
 
 scanner = texttasks.tag_scanner('delegated')
@@ -75,7 +76,7 @@ mit_list = [mit for mit in mit_list if mit not in delegated_list]
 flagged_list = applewrap.get_flagged_emails(conf.mail_client)
 
 # Produce output
-print(wp.html_header('MITs', 'TextTasks'))
+print(wp.html_header('Overview', 'TextTasks'))
 if not mit_list and not flagged_list:
     print("&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;")
 else:
