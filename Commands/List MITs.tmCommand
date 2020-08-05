@@ -9,21 +9,19 @@
 # encoding: utf-8
 
 """
-Provide an overview of important tasks.
-
+Provide an overview of important tasks.  
 List tasks tagged with @mit, @due, or @delegated as well as flagged emails 
-in the HTML companion view as clickable links.
-How many days to look ahead for due tasks is controlled by TT_DUE_LOOKAHEAD
-and mail client is controlled by TT_MAIL_CLIENT, see Bundle -&gt; Settings.
+in the HTML companion view as clickable links.  
+How many days to look ahead for due tasks is controlled by TT\_DUE\_LOOKAHEAD
+and mail client is controlled by TT\_MAIL\_CLIENT, see Bundle -&gt; Settings.
 """
 
 
 import os
 import sys
 import re
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 import urllib
-
 
 if 'TM_PYTHON__BUNDLE_SUPPORT' not in os.environ:
     sys.stderr.write('Python3 bundle required')
@@ -127,7 +125,7 @@ print(wp.html_footer())
 	<key>keyEquivalent</key>
 	<string>^m</string>
 	<key>name</key>
-	<string>List MITs</string>
+	<string>Show Overview</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
