@@ -33,11 +33,16 @@ RE_ISTASK = r'^(\s*)([-|x|\+])\s+'
 
 class Task(object):
     """docstring for Task"""
-    def __init__(self, raw, context):
+    def __init__(self, raw, context=None):
         super().__init__()
-        self.project = context['project']
-        self.file = context['file']
-        self.line = context['line']
+        if context:
+            self.project = context['project']
+            self.file = context['file']
+            self.line = context['line']
+        else:
+            self.project = '---'
+            self.file = '---'
+            self.line = 0
         self.indent = 0
         self.status = Status.BLANK
         self.description = ""
