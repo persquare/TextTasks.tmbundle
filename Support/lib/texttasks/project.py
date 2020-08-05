@@ -50,31 +50,35 @@ class Project(Task):
         Archive section created if necessary.
         """
         # Special care should be taken to handle top-level tasks (i.e. without heading)
-        archived = []
-        scanlist = self.subtasks
+
+        # prep
+        top_tasks = []
+        headings = []
         archive_heading = None
-        for t in list(scanlist):
-            if t.status is Status.HEADING and t.description == "Archive":
-                archive_heading = t
-                continue
+        for t in self.subtasks:
             if t.status is Status.HEADING:
-                archived.extend(self._archive_tasklist(t.subtasks))
-            elif t.status in (Status.DONE, Status.CANCELLED):
-                if self._task_complete(t):
-                    scanlist.remove(t)
-                    archived.append(t)
+                if t.description == "Archive":
+                    archive_heading = t
+                else:
+                    headings.append(t)
+            else:
+                top_tasks.append(t)
+
+        archived = self._archive_tasklist(top_tasks)
+        for heading in headings:
+            archived.extend(self._archive_tasklist(heading.subtasks))
 
         if not archived:
             return
         if not archive_heading:
-            raise Exception("FIXME: Missing Archive heading")
+            archive_heading = Task('Archive:')
+
         archive_heading.subtasks[:0] = archived
         now = datetime.datetime.now()
         now_str = now.strftime("%Y-%m-%d %H:%M:%S")
         archive_heading.subtasks[:0] = [Task(f"---- {now_str} ----")]
 
-
-
+        self.subtasks = top_tasks + headings + [archive_heading]
 
     def parse(self, raw):
         pass
