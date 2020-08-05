@@ -1,5 +1,6 @@
 from .scanner import full_scanner
-from .task import Status, Task, Project
+from .task import Status, Task
+from .project import Project
 
 def _project_lines(context, scanner):
     with open(context['file'], encoding='utf8') as f:
