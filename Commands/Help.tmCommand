@@ -5,50 +5,80 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
-# encoding: utf-8
+	<string>#!/usr/bin/env python3
 
-"""Show help for the TextTasks bundle."""
+"""
+Show this help
+"""
 
 import os
 import sys
-import subprocess
-import StringIO
 
-envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
-sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
+try:
+    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
+    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
+except:
+    errmsg = """
+    The PythonHelpers bundle required, see&lt;br/&gt;
+    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
+    github.com/persquare/PythonHelpers.tmbundle
+    &lt;/a&gt;
+    """
+    sys.stderr.write(errmsg)
+    sys.exit(205)
+    
+from TextMate import help_gen
+from TextMate import webpreview as wp
 
-import webpreview as wp
-import help_gen
+intro = """
+# Intro
 
-# Get the static part of the documentation
-help_file = os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'help.markdown')
-with open(help_file, 'r') as f:
-     help_text = f.read()
+Light-weight task/project tracking using plain text files.
+"""
 
-# Get the auto-generated part of the documentation
-cmd_dir = os.path.join(os.environ['TM_BUNDLE_SUPPORT'], '../Commands')
-f = StringIO.StringIO()
-save_stdout = sys.stdout
-sys.stdout = f
-help_gen.generate_keyboard_shortcut_docs(cmd_dir)
-sys.stdout = save_stdout
-shortcut_docs = f.getvalue()
-f.close()
-     
+body = """
+# Features
 
-print wp.html_header('TextTasks Bundle Help', 'TextTasks')
+## Return key behaviour 
 
-# Let markdown_to_html.rb do the heavy lifting
-md2help = os.path.join(os.environ['TM_SUPPORT_PATH'], 'lib/markdown_to_help.rb')     
-p = subprocess.Popen(md2help, stdin=subprocess.PIPE)
-p.stdin.write(u'# Quickstart (keyboard shortcuts)'.encode('utf-8'))
-p.stdin.write(shortcut_docs)
-p.stdin.write(help_text)
-p.stdin.close() # signal end of file
- 
-print wp.html_footer()
- 
+The return key behaves differently depending on the caret position. There are five cases:
+
+1. in leading whitespace before task =&gt; insert new task before line
+2. at end of task =&gt; insert new task on new line 
+3. inside task =&gt; split task at caret and insert new task on new line 
+4. at end after empty task =&gt; clear empty task and align caret with leading space 
+5. outside a task behave as usual
+
+## Useful commands from TextMate
+⌃⌘↑ Move line/selection up  
+⌃⌘↓ Move line/selection down  
+⌥⇥ Indent line/selection  
+⇧⌥⇥ Outdent line/selection  
+
+## Tags
+
+### Special tags
+
+* **@project(*name*)**  
+  When going revising lists you can tag a task with @project(*name*) and when done, selecting "Move Tagged" will move tasks to the project corresponding to *name*.
+
+* **@due(*date*)**  
+  Add the task to Reminders app, changes the tag to @reminded.
+  You can set the target Reminders account and list in the settings if you have many accounts and/or lists.
+
+* **@mit**  
+  *Most Important Things*, @mit, is a tag that is used by the List MITs command to list all tasks, regardless of project, in the HTML view. 
+
+## Configuration
+
+Configuration is done via the bundle settings, TextMate -&gt; Bundles -&gt; Edit Bundles…, select Settings.
+
+"""
+print(wp.html_header('TextTasks Help', 'TextTasks'))
+
+print(help_gen.help_for_bundle(intro, body))
+
+print(wp.html_footer())
 
 </string>
 	<key>input</key>

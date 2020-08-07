@@ -1,7 +1,8 @@
 + Make archive a function of texttasks module
 - fix Select Due/MIT
-- Rename List MITs to Show Overview
++ Rename List MITs to Show Overview
 - Clean up Help
 - Modernize the "simple" commands
 - Remove local exit_codes, help_gen, tt_helpers
+  - Require TMPythonHelpers.tmBundle  
 - Add tests

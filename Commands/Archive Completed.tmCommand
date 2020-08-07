@@ -13,15 +13,21 @@
 import os
 import sys
 
-if 'TM_PYTHON_HELPERS_BUNDLE_SUPPORT' not in os.environ:
-    sys.stderr.write('Python3 bundle required')
-    sys.exit(206)
+try:
+    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
+    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
+except:
+    errmsg = """
+    The PythonHelpers bundle required, see&lt;br/&gt;
+    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
+    github.com/persquare/PythonHelpers.tmbundle
+    &lt;/a&gt;
+    """
+    sys.stderr.write(errmsg)
+    sys.exit(205)
     
-envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
-sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
-
-import texttasks
 from TextMate import exit_codes as exit
+import texttasks
 
 try:
     filepath = os.environ['TM_FILEPATH']
