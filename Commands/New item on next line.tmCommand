@@ -14,14 +14,9 @@ import os
 import sys
 import re
 
-envvars = ['TM_BUNDLE_SUPPORT']
-sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
-
-import exit_codes as exit
-
 if os.environ.get('TM_SELECTED_TEXT', None):
     # If there is a selection I can't get access to the line?! Bail.
-    exit.discard()
+    sys.exit(200) # exit.discard()
 
 line = os.environ.get('TM_CURRENT_LINE')
 line = line.rstrip('\r\n ')
