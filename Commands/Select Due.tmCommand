@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/env python3
 
 """
 Pop up menu with tasks tagged with @due.
@@ -13,76 +13,38 @@ Pop up menu with tasks tagged with @due.
 
 import os
 import sys
-import subprocess
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 
-envvars = ['TM_BUNDLE_SUPPORT', 'TM_SUPPORT_PATH']
-sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
-
-import tt_helpers as tth
-import exit_codes as exit
-from plistlib import writePlistToString, readPlistFromString
-
-
-dialog = os.environ['DIALOG']
-
-def _call_dialog(command, *args):
-    """ Call the Textmate Dialog process
-    command is the command to invoke.
-    args are the strings to pass as arguments
-    a dict representing the plist returned from DIALOG is returned
+try:
+    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
+    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
+except:
+    errmsg = """
+    The PythonHelpers bundle required, see&lt;br/&gt;
+    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
+    github.com/persquare/PythonHelpers.tmbundle
+    &lt;/a&gt;
     """
-    popen_args = [dialog, command]
-    popen_args.extend(args)
-    result = subprocess.check_output(popen_args)
-    return result
+    sys.stderr.write(errmsg)
+    sys.exit(205)
 
-def present_menu(menu_items):
-    selections = [{'title':item} for item in menu_items]
-    retval = _call_dialog('menu', '--items', writePlistToString(selections))
-    d = readPlistFromString(retval) if retval else {}
-    return d.get('title')
+import TextMate as tm
+import texttasks
     
+conf = texttasks.config()
+projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 
-def scan_all_projects_for_tag(tag):
-    TAGGED_TASK_TEMPLATE = r"^(\s*)-\s+(.+?)\s(?:\s*@.+?\s)*?@%s(?:\((.*?)\)\s*)?(?:\s*@.+?)*\s*$"
-    regex = TAGGED_TASK_TEMPLATE % tag
-    tagged_tasks = projects.scan_all_projects(regex)
-    for task in tagged_tasks:
-        task[tag] = task['match'].group(3)
-        task['description'] = task['match'].group(2)
-    return tagged_tasks
-
-def filter_due_list(due_list):
-    then = date.today() + timedelta(days=15)
-    new_list = []
-    for due in due_list:
-        due_string = due['due'].strip()
-        try:
-            when = datetime.strptime(due_string[-8:], "%y-%m-%d")
-        except:
-            # Badly formatted, don't list
-            when = datetime.now() + timedelta(days=100)
-        when = when.date()
-        if when &lt; then:
-            new_list.append(due)
-    new_list = sorted(new_list, key=lambda k: k['due'])        
-    return new_list
-
-projects = tth.Projects()
-# mit_list = scan_all_projects_for_tag('mit')
-# print str(mit_list).encode('utf-8')
-due_list = scan_all_projects_for_tag('due')
-due_list = filter_due_list(due_list)
-
-
-# foo = {"apa":{"info":"apa"}, "banan":{"info":"banan"}, "apelsin":{"info":"apelsin"}}
-menuitems = ["{}: {}".format(x['project'], x['description']) for x in due_list]
-x = present_menu(menuitems)
+lookahead = int(os.environ.get('TT_DUE_LOOKAHEAD', 14))
+then = date.today() + timedelta(days=lookahead)
+predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
+scanner = texttasks.tag_scanner('due', predicate)
+due_list = projects.scan(scanner)
+menuitems = ["{}: {}".format(x.project, x.description) for x in due_list]
+x = tm.present_menu(menuitems)
 if x:
-    idx = menuitems.index(x)
-    # print "{}:{}".format(due_list[idx]['file'], due_list[idx]['line'])
-    cmd = "{} -l{} {}".format(os.environ['TM_MATE'], due_list[idx]['line'], due_list[idx]['file'])
+    idx = menuitems.index(x['title'])
+    task = due_list[idx]
+    cmd = "{} -l{} {}".format(os.environ['TM_MATE'], task.line, task.file)
     os.system(cmd)
 </string>
 	<key>input</key>
