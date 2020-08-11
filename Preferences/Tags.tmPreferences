@@ -14,7 +14,7 @@
 				<key>name</key>
 				<string>TT_TAG_LIST</string>
 				<key>value</key>
-				<string>mit,remind,project</string>
+				<string>mit,due,delegated</string>
 			</dict>
 		</array>
 	</dict>

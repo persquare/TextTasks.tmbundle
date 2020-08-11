@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/env python3
 # encoding: utf-8
 
 """Insert a tag at the end of the line. Tags can be selected from a pop-up list."""
@@ -15,13 +15,13 @@ import os
 
 line = sys.stdin.readline().rstrip('\r\n ')
 if line.endswith(':'):
-    exit.discard()
+    sys.exit(200) # discard()
     
 parameter = os.environ.get('TM_SELECTED_TEXT', '')
-taglist = os.environ.get('TT_TAG_LIST', 'mit,remind,project')   
-tag = u' @${1|%s|}(${2:%s})${0}' % (taglist, parameter.decode('utf-8'))
+taglist = os.environ.get('TT_TAG_LIST', 'mit,due,delegated')   
+tag = u' @${1|%s|}(${2:%s})${0}' % (taglist, parameter)
 
-sys.stdout.write(line + tag.encode('utf-8'))</string>
+sys.stdout.write(line + tag)</string>
 	<key>input</key>
 	<string>line</string>
 	<key>inputFormat</key>

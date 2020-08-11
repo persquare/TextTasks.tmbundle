@@ -5,7 +5,7 @@
 	<key>beforeRunningCommand</key>
 	<string>nop</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python -S
+	<string>#!/usr/bin/env python3
 
 """Toggle (cycle) status of current task from 'pending' to 'completed' to 'cancelled' and back to 'pending' by repeating command."""
 
@@ -13,10 +13,20 @@ import os
 import sys
 import re
 
-envvars = ['TM_BUNDLE_SUPPORT']
-sys.path[:0] = [os.environ[v]+'/lib' for v in envvars if os.environ[v] not in sys.path]
-
-import exit_codes as exit
+try:
+    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
+    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
+except:
+    errmsg = """
+    The PythonHelpers bundle required, see&lt;br/&gt;
+    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
+    github.com/persquare/PythonHelpers.tmbundle
+    &lt;/a&gt;
+    """
+    sys.stderr.write(errmsg)
+    sys.exit(205)
+    
+from TextMate import exit_codes as exit
 
 selection = os.environ.get('TM_SELECTED_TEXT', None)
 if selection:
