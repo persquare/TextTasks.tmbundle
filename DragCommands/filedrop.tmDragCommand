@@ -3,27 +3,29 @@
 <plist version="1.0">
 <dict>
 	<key>command</key>
-	<string>#!/usr/bin/env python
+	<string>#!/usr/bin/env python3
 
 import os
 import sys
+import urllib.parse
 
-# puts "file://#{ENV['TM_DROPPED_FILE']}"
-filepath = os.path.abspath(os.environ['TM_DROPPED_FILE'])
-sys.stdout.write("file://"+filepath)
-
+filename = os.environ.get('TM_DROPPED_FILE')
+if not os.path.isabs(filename):
+    filename = os.path.abspath(filename)
+qfilename = 'file://' + urllib.parse.quote(filename)
+sys.stdout.write(qfilename)
 </string>
 	<key>draggedFileExtensions</key>
 	<array>
 		<string>*</string>
 	</array>
 	<key>name</key>
-	<string>File link</string>
+	<string>filedrop</string>
 	<key>output</key>
 	<string>insertAsSnippet</string>
 	<key>scope</key>
 	<string>text.texttasks</string>
 	<key>uuid</key>
-	<string>A83B7A49-A433-4AA7-B7D0-0912188692C5</string>
+	<string>362DB221-8D16-4A30-8E78-D32E3781EEC4</string>
 </dict>
 </plist>
