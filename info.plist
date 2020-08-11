@@ -17,47 +17,35 @@
 		</array>
 		<key>items</key>
 		<array>
+			<string>8D75A4B3-4104-4B9B-AE8F-8104C78DC66E</string>
 			<string>8776A03B-6EA8-4977-9EC5-C5CE2BCD936E</string>
 			<string>B0D19F35-8F1A-4552-AF25-5D4A2A9C1575</string>
 			<string>1F2821CF-15BA-48F4-A50B-F361114D8CD9</string>
-			<string>CE76D0C6-10B7-4A5A-BB96-0183B0532F62</string>
-			<string>------------------------------------</string>
-			<string>F2CD0002-DF7F-48CC-BEBE-9D8821494FB8</string>
+			<string>5F47096A-B06C-4926-97E8-479914B344E9</string>
 			<string>247510C1-7660-4C19-951D-25EAFEE820C4</string>
-			<string>2E89C723-DFCC-4B4E-9503-7FE127D4D3BA</string>
-			<string>CF02AA64-EEEC-4542-BCC1-695A4991356C</string>
 			<string>------------------------------------</string>
-			<string>8B16B393-7395-4522-A4ED-D237E97399E8</string>
+			<string>2E89C723-DFCC-4B4E-9503-7FE127D4D3BA</string>
+			<string>D44C5A01-DA8A-46AB-9AF7-C6F13556909B</string>
+			<string>75A8A9F4-4F7C-4AE7-94F0-28910A8A27ED</string>
+			<string>------------------------------------</string>
 			<string>D80ED423-DBCA-4573-9E00-7D7CDD37262F</string>
 		</array>
 		<key>submenus</key>
 		<dict>
-			<key>CE76D0C6-10B7-4A5A-BB96-0183B0532F62</key>
-			<dict>
-				<key>items</key>
-				<array>
-					<string>8D75A4B3-4104-4B9B-AE8F-8104C78DC66E</string>
-					<string>D72274DB-9225-4D4B-A489-0C00F2D37FFA</string>
-					<string>30552804-B1EA-4F85-BEB5-2EBEADD2943E</string>
-					<string>09048BE0-54D2-40F7-992C-F16CACA5D097</string>
-				</array>
-				<key>name</key>
-				<string>Projects</string>
-			</dict>
 		</dict>
 	</dict>
 	<key>name</key>
 	<string>TextTasks</string>
+	<key>require</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Python Helpers</string>
+			<key>uuid</key>
+			<string>35499A98-BE20-439E-B3FA-714F56392768</string>
+		</dict>
+	</array>
 	<key>uuid</key>
 	<string>D133398F-2C1F-4FA5-AE13-8C11D26723FD</string>
-    <key>require</key>
-    <array>        
-        <dict>
-            <key>name</key>
-            <string>Python Helpers</string>
-            <key>uuid</key>
-            <string>35499A98-BE20-439E-B3FA-714F56392768</string>
-        </dict>
-    </array>    
 </dict>
 </plist>
