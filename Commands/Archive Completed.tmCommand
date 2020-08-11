@@ -8,7 +8,7 @@
 	<string>#!/usr/bin/env python3
 # encoding: utf-8
 
-"""Move all completed and cancelled tasks (including immediate comments) to the end of the file."""
+"""Move all completed/cancelled tasks (including comments) to the end of the file.  For a task to be completed, all of its subtasks must be completed/cancelled."""
 
 import os
 import sys

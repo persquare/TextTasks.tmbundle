@@ -7,6 +7,10 @@
 	<key>command</key>
 	<string>#!/usr/bin/env python
 
+"""
+Pop up menu with tasks tagged with @due.
+"""
+
 import os
 import sys
 import subprocess

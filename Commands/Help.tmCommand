@@ -33,11 +33,36 @@ from TextMate import webpreview as wp
 intro = """
 # Intro
 
-Light-weight task/project tracking using plain text files.
+Light-weight task/project tracking using plain text files. Mostly TaskPaper compatible formatting:
+    
+    optional heading:
+    - a task
+      - a subtask
+    + a completed task
+    x a cancelled task
+    Any line not preceeded by -/+/x or ending with : is considered a comment
+   
 """
 
 body = """
 # Features
+
+## Tags
+
+Tasks can be tagged using one or more '@tag' words, e.g. '@prioritize', at the end of the task. Except for the tags listed below, tags have no special meaning.
+
+### Special tags
+
+**@delegated(*name*)**  
+  Tasks tagged with delegated will show up in the delegated section of the overview.
+  The argument (name) carries no special meaning and can be any string. 
+
+**@due(*date*)**  
+  Tasks tagged with due will show up in the due soon section of the overview if they are within TT\_DUE\_LOOKAHEAD days (see Configuration section). The date format is YYYY-MM-DD. 
+
+**@mit**  
+  *Most Important Things*, @mit, is a tag that is used to indicate just that. Task tagged with @mit will show up at the top of the overview. 
+
 
 ## Return key behaviour 
 
@@ -55,23 +80,9 @@ The return key behaves differently depending on the caret position. There are fi
 ⌥⇥ Indent line/selection  
 ⇧⌥⇥ Outdent line/selection  
 
-## Tags
-
-### Special tags
-
-* **@project(*name*)**  
-  When going revising lists you can tag a task with @project(*name*) and when done, selecting "Move Tagged" will move tasks to the project corresponding to *name*.
-
-* **@due(*date*)**  
-  Add the task to Reminders app, changes the tag to @reminded.
-  You can set the target Reminders account and list in the settings if you have many accounts and/or lists.
-
-* **@mit**  
-  *Most Important Things*, @mit, is a tag that is used by the List MITs command to list all tasks, regardless of project, in the HTML view. 
-
 ## Configuration
 
-Configuration is done via the bundle settings, TextMate -&gt; Bundles -&gt; Edit Bundles…, select Settings.
+Configuration is done via the bundle's settings; TextMate -&gt; Bundles -&gt; Edit Bundles…, select TextTasks -&gt; Settings.
 
 """
 print(wp.html_header('TextTasks Help', 'TextTasks'))

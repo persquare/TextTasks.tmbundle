@@ -7,7 +7,7 @@
 	<key>command</key>
 	<string>#!/usr/bin/env python3 -S
 
-"""Open another project selected from a pop-up list."""
+"""Open a project by selecting from a pop-up list."""
 
 import os
 import sys
