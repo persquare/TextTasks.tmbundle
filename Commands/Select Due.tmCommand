@@ -40,10 +40,9 @@ predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
 scanner = texttasks.tag_scanner('due', predicate)
 due_list = projects.scan(scanner)
 menuitems = ["{}: {}".format(x.project, x.description) for x in due_list]
-x = tm.present_menu(menuitems)
-if x:
-    idx = menuitems.index(x['title'])
-    task = due_list[idx]
+choice = tm.present_menu(menuitems)
+if choice is not None:
+    task = due_list[choice]
     cmd = "{} -l{} {}".format(os.environ['TM_MATE'], task.line, task.file)
     os.system(cmd)
 </string>

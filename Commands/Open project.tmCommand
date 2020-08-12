@@ -37,9 +37,9 @@ projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 project_list = projects.projects
 
 r = dialog.present_menu(project_list)
-if not r:
+if r is None:
     exit.show_tool_tip('No selection made')
-f = projects.file_for_project(r.get('title'))
+f = projects.file_for_project(project_list[r])
 if f:
     # FIXME: Make opening files a command in Python3's TextMate module,
     #        and drop os.system in favour of subprocess 

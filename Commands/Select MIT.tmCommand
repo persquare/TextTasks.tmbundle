@@ -36,10 +36,9 @@ projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 scanner = texttasks.tag_scanner('mit')
 mit_list = projects.scan(scanner)
 menuitems = ["{}: {}".format(x.project, x.description) for x in mit_list]
-x = tm.present_menu(menuitems)
-if x:
-    idx = menuitems.index(x['title'])
-    task = mit_list[idx]
+choice = tm.present_menu(menuitems)
+if choice is not None:
+    task = mit_list[choice]
     cmd = "{} -l{} {}".format(os.environ['TM_MATE'], task.line, task.file)
     os.system(cmd)
 </string>
