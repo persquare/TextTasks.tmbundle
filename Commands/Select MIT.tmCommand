@@ -14,33 +14,11 @@ Pop up menu with tasks tagged with @mit.
 import os
 import sys
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-import TextMate as tm
-import texttasks
-    
-conf = texttasks.config()
-projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
+import commands
 
-scanner = texttasks.tag_scanner('mit')
-mit_list = projects.scan(scanner)
-menuitems = ["{}: {}".format(x.project, x.description) for x in mit_list]
-choice = tm.present_menu(menuitems)
-if choice is not None:
-    task = mit_list[choice]
-    cmd = "{} -l{} {}".format(os.environ['TM_MATE'], task.line, task.file)
-    os.system(cmd)
+commands.select_mit()
 </string>
 	<key>input</key>
 	<string>selection</string>

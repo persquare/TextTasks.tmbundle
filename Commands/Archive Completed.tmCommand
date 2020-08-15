@@ -13,29 +13,12 @@
 import os
 import sys
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
-    
-from TextMate import exit_codes as exit
-import texttasks
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-try:
-    filepath = os.environ['TM_FILEPATH']
-except:
-    exit.show_tool_tip(f"Failed to parse file '{os.environ.get('TM_DISPLAYNAME', '???')}'")
-proj = texttasks.parse(filepath)
-proj.archive()
-print(proj)
+import commands
+
+archived = commands.archive_completed()
+print(archived)
 </string>
 	<key>input</key>
 	<string>none</string>

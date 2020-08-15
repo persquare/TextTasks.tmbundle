@@ -13,38 +13,13 @@ Pop up menu with tasks tagged with @due.
 
 import os
 import sys
-from datetime import date, timedelta
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-import TextMate as tm
-import texttasks
+import commands
+
+commands.select_due()
     
-conf = texttasks.config()
-projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
-
-lookahead = int(os.environ.get('TT_DUE_LOOKAHEAD', 14))
-then = date.today() + timedelta(days=lookahead)
-predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
-scanner = texttasks.tag_scanner('due', predicate)
-due_list = projects.scan(scanner)
-menuitems = ["{}: {}".format(x.project, x.description) for x in due_list]
-choice = tm.present_menu(menuitems)
-if choice is not None:
-    task = due_list[choice]
-    cmd = "{} -l{} {}".format(os.environ['TM_MATE'], task.line, task.file)
-    os.system(cmd)
 </string>
 	<key>input</key>
 	<string>none</string>

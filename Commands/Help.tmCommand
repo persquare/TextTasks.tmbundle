@@ -14,21 +14,9 @@ Show this help
 import os
 import sys
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
-    
-from TextMate import help_gen
-from TextMate import webpreview as wp
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
+
+import commands
 
 intro = """
 # Intro
@@ -85,11 +73,8 @@ The return key behaves differently depending on the caret position. There are fi
 Configuration is done via the bundle's settings; TextMate -&gt; Bundles -&gt; Edit Bundles…, select TextTasks -&gt; Settings.
 
 """
-print(wp.html_header('TextTasks Help', 'TextTasks'))
 
-print(help_gen.help_for_bundle(intro, body))
-
-print(wp.html_footer())
+print(commands.html_help(intro, body))
 
 </string>
 	<key>input</key>

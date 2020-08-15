@@ -5,48 +5,18 @@
 	<key>beforeRunningCommand</key>
 	<string>saveModifiedFiles</string>
 	<key>command</key>
-	<string>#!/usr/bin/env python3 -S
+	<string>#!/usr/bin/env python3
 
 """Open a project by selecting from a pop-up list."""
 
 import os
 import sys
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
-    
-from TextMate import exit_codes as exit
-from TextMate import dialog
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-import texttasks
+import commands
 
-
-
-conf = texttasks.config()
-projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
-project_list = projects.projects
-
-r = dialog.present_menu(project_list)
-if r is None:
-    exit.show_tool_tip('No selection made')
-f = projects.file_for_project(project_list[r])
-if f:
-    # FIXME: Make opening files a command in Python3's TextMate module,
-    #        and drop os.system in favour of subprocess 
-    os.system('open -a TextMate %s' % f)
-    exit.discard()
-else:
-    exit.show_tool_tip('Project not found')
+commands.open_project()
 
 </string>
 	<key>input</key>
