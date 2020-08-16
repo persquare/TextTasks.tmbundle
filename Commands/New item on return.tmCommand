@@ -21,65 +21,13 @@ The return key behaves differently depending on the caret position. There are fi
 
 import os
 import sys
-import re
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
-    
-from TextMate import exit_codes as exit
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-if os.environ.get('TM_SELECTED_TEXT', None):
-    # If there is a selection I can't get access to the line?! Bail.
-    exit.discard()
+import commands
 
-line = os.environ.get('TM_CURRENT_LINE')
-line = line.rstrip('\r\n ')
-col = int(os.environ.get('TM_LINE_INDEX'))
-
-# The zero-or-one match '- ?' in the regex below 
-# is needed since ' ' are stripped off from the end of line above, 
-# if there was no task, the ' ' after '-' is also removed.
-match = re.match(r'^(\s*)[-+x] ?(.*)$', line)
-
-if not match:
-    match = re.match(r'^(.+:)\s*$', line)
-    if match and col &gt;= len(match.group(1)):
-        sys.stdout.write('\n- ${0}')
-    else:
-        # Not a heading =&gt; just insert newline
-        sys.stdout.write('\n')
-else:    
-    # exit.show_tool_tip('&lt;%s&gt;\n&lt;%s&gt;\n&lt;%s&gt;' % (match.group(0), match.group(1), match.group(2)))    
-    # Four cases:
-    # 1) in leading whitespace =&gt; insert new task before
-    # 2) at end =&gt; insert new task after
-    # 3) inside task =&gt; split at cursor with new task after
-    # 4) at end after empty task =&gt; clear empty task and align with leading space
-    
-    indent = match.group(1)
-    task = match.group(2)
-    indent_level = len(indent)
-    
-    # Case (4)
-    if not task and col &gt;= indent_level:
-        exit.replace_text(indent)
-    # Case (1)
-    if col &lt;= indent_level:
-        sys.stdout.write('%s- ${0}\n' % indent[col:])    
-    # Case (2) &amp; (3)
-    if col &gt; indent_level:
-        sys.stdout.write('\n- ${0}')
-</string>
+snippet = commands.augment_return_behaviour()
+sys.stdout.write(snippet)</string>
 	<key>input</key>
 	<string>line</string>
 	<key>inputFormat</key>

@@ -1,7 +1,9 @@
 import os
 import sys
 import re
+import urllib
 from datetime import date, timedelta
+
 
 try:
     helper = os.path.join(os.environ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT'], 'lib')
@@ -24,6 +26,56 @@ from TextMate import webpreview as wp
 from TextMate import help_gen
 
 import texttasks
+import applewrap
+
+def augment_return_behaviour():
+    if os.environ.get('TM_SELECTED_TEXT', None):
+        # If there is a selection I can't get access to the line?! Bail.
+        exit.discard()
+
+    line = os.environ.get('TM_CURRENT_LINE')
+    line = line.rstrip('\r\n ')
+    col = int(os.environ.get('TM_LINE_INDEX'))
+
+    # The zero-or-one match '- ?' in the regex below
+    # is needed since ' ' are stripped off from the end of line above,
+    # if there was no task, the ' ' after '-' is also removed.
+    match = re.match(r'^(\s*)[-+x] ?(.*)$', line)
+
+    if not match:
+        match = re.match(r'^(.+:)\s*$', line)
+        if match and col >= len(match.group(1)):
+            return '\n- ${0}'
+            # sys.stdout.write()
+        else:
+            # Not a heading => just insert newline
+            return '\n'
+            # sys.stdout.write('\n')
+    else:
+        # exit.show_tool_tip('<%s>\n<%s>\n<%s>' % (match.group(0), match.group(1), match.group(2)))
+        # Four cases:
+        # 1) in leading whitespace => insert new task before
+        # 2) at end => insert new task after
+        # 3) inside task => split at cursor with new task after
+        # 4) at end after empty task => clear empty task and align with leading space
+
+        indent = match.group(1)
+        task = match.group(2)
+        indent_level = len(indent)
+
+        # Case (4)
+        if not task and col >= indent_level:
+            exit.replace_text(indent)
+        # Case (1)
+        if col <= indent_level:
+            return '%s- ${0}\n' % indent[col:]
+            # sys.stdout.write()
+        # Case (2) & (3)
+        if col > indent_level:
+            return '\n- ${0}'
+            # sys.stdout.write()
+
+
 
 def open_project():
     conf = texttasks.config()
@@ -123,4 +175,89 @@ def html_help(intro='', body=''):
         wp.html_footer()
     ]
     return "\n".join(parts)
+
+def html_overview():
+
+    conf = texttasks.config()
+
+    def format_output(task):
+        FMT = u'<p>{t.project} : <a href="{url}">{t.description}</a>{note}</p>'
+        TXMT_URL = u'txmt://open?url=file://{t.file}&line={t.line}&column={col}'
+        url = TXMT_URL.format(col=1, t=task)
+        notes = [tag['value'] for tag in task.tags if tag['name'] in ('delegated', 'due') and tag['value']]
+        annotation = " ({})".format(", ".join(notes)) if notes else ""
+        return FMT.format(url=url, t=task, note=annotation)
+
+    def format_flagged_email(flagged):
+        """flagged_ is a tuple with (from, subject, message_id)"""
+        sender, task, msg_id = flagged
+        msg_id = urllib.parse.quote(msg_id)
+        FMT = u'<p>{} : <a href="#" onclick="{}">{}</a></p>'
+        MAIL_OPEN = u"open_mail('{}', '{}')"
+        url = MAIL_OPEN.format(conf.mail_client, str(msg_id))
+        return FMT.format(sender, url, task)
+
+    def sort_due_list(due_list):
+        return due_list
+
+
+    projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
+
+    scanner = texttasks.tag_scanner('mit')
+    mit_list = projects.scan(scanner)
+
+    lookahead = int(os.environ.get('TT_DUE_LOOKAHEAD', 14))
+    then = date.today() + timedelta(days=lookahead)
+    predicate = texttasks.date_predicate("<=", then.strftime("%Y-%m-%d"))
+    scanner = texttasks.tag_scanner('due', predicate)
+    due_list = projects.scan(scanner)
+
+    scanner = texttasks.tag_scanner('delegated')
+    delegated_list = projects.scan(scanner)
+
+    # Remove mits from due list
+    due_list = [due for due in due_list if due not in mit_list]
+    # Remove delegated from mit and due lists
+    due_list = [due for due in due_list if due not in delegated_list]
+    # FIXME: Sort due list on date
+    mit_list = [mit for mit in mit_list if mit not in delegated_list]
+    # Get flagged emails
+    flagged_list = applewrap.get_flagged_emails(conf.mail_client)
+
+    # Produce output
+    parts = [wp.html_header('Overview', 'TextTasks')]
+    if not mit_list and not flagged_list:
+        parts.append("<p>No MIT's, due tasks, or flagged emails found :-D</p>")
+    else:
+        mailscript = '''
+        <script>
+            function open_mail(client, msgid) {
+                if (client === "outlook") {
+                    cmd = "mdfind com_microsoft_outlook_recordID == " + msgid + " -0 | xargs -0 open";
+                } else {
+                    // Assume Mail.app
+                    cmd = "open message://%3C" + msgid + "%3E"
+                }
+                obj = TextMate.system(cmd, null);
+            }
+        </script>
+        '''
+        parts.append(mailscript)
+
+        parts.append('<h2>Tasks</h2>')
+        parts.extend([format_output(mit) for mit in mit_list])
+
+        parts.append('<h2>Due soon</h2>')
+        parts.extend([format_output(due) for due in due_list])
+
+        parts.append('<h2>Delegated</h2>')
+        parts.extend([format_output(delegated) for delegated in delegated_list])
+
+        parts.append('<h2>Flagged emails</h2>')
+        parts.extend([format_output(flagged) for flagged in flagged_list])
+
+    parts.append(wp.html_footer())
+    return "\n".join(parts)
+
+
 

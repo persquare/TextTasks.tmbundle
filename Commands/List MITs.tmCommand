@@ -19,110 +19,12 @@ and mail client is controlled by TT_MAIL_CLIENT, see configuration section.
 
 import os
 import sys
-import re
-from datetime import date, timedelta
-import urllib
 
-try:
-    envvars = ['TM_PYTHON_HELPERS_BUNDLE_SUPPORT', 'TM_BUNDLE_SUPPORT']
-    sys.path[:0] = [os.path.join(os.environ[v], 'lib') for v in envvars]
-except:
-    errmsg = """
-    The PythonHelpers bundle required, see&lt;br/&gt;
-    &lt;a href=https://github.com/persquare/PythonHelpers.tmbundle&gt;
-    github.com/persquare/PythonHelpers.tmbundle
-    &lt;/a&gt;
-    """
-    sys.stderr.write(errmsg)
-    sys.exit(205)
+sys.path[:0] = [os.path.join(os.environ['TM_BUNDLE_SUPPORT'], 'lib')]
 
-from TextMate import exit_codes as exit
-from TextMate import webpreview as wp
-import texttasks
-import applewrap
+import commands
 
-conf = texttasks.config()
-
-def format_output(task):
-    FMT = u'&lt;p&gt;{t.project} : &lt;a href="{url}"&gt;{t.description}&lt;/a&gt;{note}&lt;/p&gt;'
-    TXMT_URL = u'txmt://open?url=file://{t.file}&amp;line={t.line}&amp;column={col}'
-    url = TXMT_URL.format(col=1, t=task)
-    notes = [tag['value'] for tag in task.tags if tag['name'] in ('delegated', 'due') and tag['value']]
-    annotation = " ({})".format(", ".join(notes)) if notes else ""
-    return FMT.format(url=url, t=task, note=annotation)
-
-def format_flagged_email(flagged):
-    """flagged_ is a tuple with (from, subject, message_id)"""
-    sender, task, msg_id = flagged
-    msg_id = urllib.parse.quote(msg_id)
-    FMT = u'&lt;p&gt;{} : &lt;a href="#" onclick="{}"&gt;{}&lt;/a&gt;&lt;/p&gt;'
-    MAIL_OPEN = u"open_mail('{}', '{}')"
-    url = MAIL_OPEN.format(conf.mail_client, str(msg_id))
-    return FMT.format(sender, url, task)
-
-def sort_due_list(due_list):
-    return due_list
-
-
-projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
-
-scanner = texttasks.tag_scanner('mit')
-mit_list = projects.scan(scanner)
-
-lookahead = int(os.environ.get('TT_DUE_LOOKAHEAD', 14))
-then = date.today() + timedelta(days=lookahead)
-predicate = texttasks.date_predicate("&lt;=", then.strftime("%Y-%m-%d"))
-scanner = texttasks.tag_scanner('due', predicate)
-due_list = projects.scan(scanner)
-
-scanner = texttasks.tag_scanner('delegated')
-delegated_list = projects.scan(scanner)
-
-# Remove mits from due list
-due_list = [due for due in due_list if due not in mit_list]
-# Remove delegated from mit and due lists
-due_list = [due for due in due_list if due not in delegated_list]
-# FIXME: Sort due list on date
-mit_list = [mit for mit in mit_list if mit not in delegated_list]
-# Get flagged emails
-flagged_list = applewrap.get_flagged_emails(conf.mail_client)
-
-# Produce output
-print(wp.html_header('Overview', 'TextTasks'))
-if not mit_list and not flagged_list:
-    print("&lt;p&gt;No @mit's or flagged emails found :-D&lt;/p&gt;")
-else:
-    print('''
-    &lt;script&gt;
-        function open_mail(client, msgid) {
-            if (client === "outlook") {
-                cmd = "mdfind com_microsoft_outlook_recordID == " + msgid + " -0 | xargs -0 open";
-            } else {
-                // Assume Mail.app
-                cmd = "open message://%3C" + msgid + "%3E"
-            }
-            obj = TextMate.system(cmd, null);
-        }
-    &lt;/script&gt;
-    ''')
-    print('&lt;h2&gt;Tasks&lt;/h2&gt;')
-    for mit in mit_list:
-        html = format_output(mit)
-        print(html) #.encode('utf-8')
-    print('&lt;h2&gt;Due soon&lt;/h2&gt;')
-    for due in due_list:
-        html = format_output(due)
-        print(html) # .encode('utf-8')
-    print('&lt;h2&gt;Delegated&lt;/h2&gt;')
-    for delegated in delegated_list:
-        html = format_output(delegated)
-        print(html) #.encode('utf-8')
-    print('&lt;h2&gt;Flagged emails&lt;/h2&gt;')
-    for flagged in flagged_list:
-        html = format_flagged_email(flagged)
-        print(html) #.encode('utf-8')
-print(wp.html_footer())
-
+print(commands.html_overview())
 </string>
 	<key>input</key>
 	<string>none</string>
