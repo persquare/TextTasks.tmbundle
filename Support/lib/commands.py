@@ -29,6 +29,21 @@ import texttasks
 import applewrap
 
 def augment_return_behaviour():
+    """
+    Augment return key behaviour depending on the caret position. There are five cases:
+
+    1. in leading whitespace before task => insert new task before line
+    2. at end of task => insert new task on new line
+    3. inside task => split task at caret and insert new task on new line
+    4. at end after empty task => clear empty task and align caret with leading space
+    5. outside a task behave as usual unless if after a heading (2) is applied
+
+    Returns a 'snippet' to be inserted.
+
+    FIXME: The implementation uses a mix of return snippets and 'exit' operations.
+
+    """
+
     if os.environ.get('TM_SELECTED_TEXT', None):
         # If there is a selection I can't get access to the line?! Bail.
         exit.discard()
@@ -46,11 +61,9 @@ def augment_return_behaviour():
         match = re.match(r'^(.+:)\s*$', line)
         if match and col >= len(match.group(1)):
             return '\n- ${0}'
-            # sys.stdout.write()
         else:
             # Not a heading => just insert newline
             return '\n'
-            # sys.stdout.write('\n')
     else:
         # exit.show_tool_tip('<%s>\n<%s>\n<%s>' % (match.group(0), match.group(1), match.group(2)))
         # Four cases:
@@ -69,15 +82,20 @@ def augment_return_behaviour():
         # Case (1)
         if col <= indent_level:
             return '%s- ${0}\n' % indent[col:]
-            # sys.stdout.write()
         # Case (2) & (3)
         if col > indent_level:
             return '\n- ${0}'
-            # sys.stdout.write()
 
 
 
 def open_project():
+    """
+    Present a menu of projects, and open the selected one in TM
+
+    FIXME: Make opening files a command in Python3's TextMate module,
+           and drop os.system in favour of subprocess
+    """
+
     conf = texttasks.config()
     projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
     project_list = projects.projects
@@ -87,8 +105,6 @@ def open_project():
         exit.show_tool_tip('No selection made')
     f = projects.file_for_project(project_list[r])
     if f:
-        # FIXME: Make opening files a command in Python3's TextMate module,
-        #        and drop os.system in favour of subprocess
         os.system('open -a TextMate %s' % f)
         exit.discard()
     else:
@@ -96,6 +112,13 @@ def open_project():
 
 
 def toggle_status():
+    """
+    Toggle task status
+
+    FIXME: Return string instead of writing it out
+    FIXME: Operate on Task objects instead of using regexes on text
+    """
+
     selection = os.environ.get('TM_SELECTED_TEXT', None)
     if selection:
         # If there is a selection I can't get access to the line?! Bail.
@@ -131,6 +154,8 @@ def toggle_status():
     sys.stdout.write('%s%s%s' % (indent, marker, task))
 
 def archive_completed():
+    """Return a modified document as a string"""
+
     try:
         filepath = os.environ['TM_FILEPATH']
     except:
@@ -140,6 +165,13 @@ def archive_completed():
     return str(proj)
 
 def select_mit():
+    """
+    Present a menu of MIT's, and go to the selected one in TM
+
+    FIXME: Make opening files a command in Python3's TextMate module,
+           and drop os.system in favour of subprocess
+    """
+
     conf = texttasks.config()
     projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 
@@ -153,6 +185,13 @@ def select_mit():
         os.system(cmd)
 
 def select_due():
+    """
+    Present a menu of due tasks, and go to the selected one in TM
+
+    FIXME: Make opening files a command in Python3's TextMate module,
+           and drop os.system in favour of subprocess
+    """
+
     conf = texttasks.config()
     projects = texttasks.TextTasks(conf.project_dirs, conf.file_exts)
 
@@ -169,6 +208,7 @@ def select_due():
         os.system(cmd)
 
 def html_help(intro='', body=''):
+    """Return help for the bundle in HTML format"""
     parts = [
         wp.html_header('TextTasks Help', 'TextTasks'),
         help_gen.help_for_bundle(intro, body),
@@ -177,6 +217,7 @@ def html_help(intro='', body=''):
     return "\n".join(parts)
 
 def html_overview():
+    """Return overview of clickable MIT's, due tasks, delegated tasks, and flagged email in HTML format"""
 
     conf = texttasks.config()
 
