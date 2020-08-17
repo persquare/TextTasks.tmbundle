@@ -295,7 +295,7 @@ def html_overview():
         parts.extend([format_output(delegated) for delegated in delegated_list])
 
         parts.append('<h2>Flagged emails</h2>')
-        parts.extend([format_output(flagged) for flagged in flagged_list])
+        parts.extend([format_flagged_email(flagged) for flagged in flagged_list])
 
     parts.append(wp.html_footer())
     return "\n".join(parts)
