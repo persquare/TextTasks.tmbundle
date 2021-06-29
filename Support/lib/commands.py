@@ -229,14 +229,15 @@ def html_overview():
         annotation = " ({})".format(", ".join(notes)) if notes else ""
         return FMT.format(url=url, t=task, note=annotation)
 
+    # FIXME: Copy/Drag-n-drop with appropriate client
     def format_flagged_email(flagged):
         """flagged_ is a tuple with (from, subject, message_id)"""
         sender, task, msg_id = flagged
         msg_id = urllib.parse.quote(msg_id)
-        FMT = u'<p>{} : <a href="#" onclick="{}">{}</a></p>'
+        FMT = u'<p>{} : <a href="#outlook://{}" onclick="{}">{}</a></p>'
         MAIL_OPEN = u"open_mail('{}', '{}')"
-        url = MAIL_OPEN.format(conf.mail_client, str(msg_id))
-        return FMT.format(sender, url, task)
+        onclick_handler = MAIL_OPEN.format(conf.mail_client, str(msg_id))
+        return FMT.format(sender, str(msg_id), onclick_handler, task)
 
     def sort_due_list(due_list):
         return due_list
